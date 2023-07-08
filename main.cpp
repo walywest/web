@@ -107,9 +107,8 @@ int main(int argc, char const *argv[])
             std::string requ = std::string(buffer, valread);
             // fototita.write(buffer, valread);
             fototita << requ;
-            // fflush(fototita);
             w += valread;
-            std::cout << buffer;
+            std::cout << requ;
             std::cout << "\n---the number of written bytes is " << w << std::endl;
             fflush(stdout);
         }
