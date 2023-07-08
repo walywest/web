@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <fcntl.h>
 #include <iostream>
 #include <sys/socket.h>
 #include <unistd.h>
@@ -13,7 +14,7 @@
 #include <fstream>
 
 #define PORT 8080
-size_t  fstrlen(char *str)
+size_t  ffstrlen(const char *str)
 {
     if (str)
     {
@@ -45,10 +46,14 @@ const char    *readfile()
 
 int main(int argc, char const *argv[])
 {
+    std::ofstream fototita("fototita.jpeg",std::ofstream::binary);
+
+    long long w;
     const char *res = readfile();
-    int server_fd, new_socket; long valread;
+    int server_fd, new_socket; long valread = 1;
     struct sockaddr_in address;
     int addrlen = sizeof(address);
+    int opts= 1;
     const char *hello = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello Worldadjbfnjdnafbkndklafmvlafbjkadnbfjnsldmvv!";
   
     // Creating socket file descriptor
@@ -59,10 +64,12 @@ int main(int argc, char const *argv[])
     }
     
 
+    memset(&address, '\0', sizeof address);
     address.sin_family = AF_INET;
-    address.sin_addr.s_addr = htons(INADDR_ANY);
+    address.sin_addr.s_addr = htonl(INADDR_ANY);
     address.sin_port = htons(PORT);
     
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opts, sizeof(int));
     memset(address.sin_zero, '\0', sizeof address.sin_zero);
     
     
@@ -76,21 +83,38 @@ int main(int argc, char const *argv[])
         perror("In listen");
         exit(EXIT_FAILURE);
     }
+    fcntl(new_socket, F_SETFL, O_NONBLOCK);
     while(1)
     {
-        printf("\n+++++++ Waiting for new connection ++++++++\n\n");
+        std::cout <<  "\n+++++++ Waiting for new connection ++++++++\n" << std::endl;
+        fflush(stdout);
         if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen))<0)
         {
             perror("In accept");
             exit(EXIT_FAILURE);
         }
-        
-        char buffer[30000] = {0};
-        std::cout << "here" << std::endl;
-        valread = read( new_socket , buffer, 30000);
-        std::cout << buffer << std::endl;
-        write(new_socket , res , strlen(res));
-        printf("------------------Hello message sent-------------------\n");
+        while (valread)
+        {
+            char buffer[30000] = {0};
+            std::cout << "here" << std::endl;
+            fflush(stdout);
+            valread = read( new_socket , buffer, 30000);
+            if (valread == -1)
+            {
+                perror("read failed");
+                exit(0);
+            }
+            std::string requ = std::string(buffer, valread);
+            // fototita.write(buffer, valread);
+            fototita << requ;
+            // fflush(fototita);
+            w += valread;
+            std::cout << buffer;
+            std::cout << "\n---the number of written bytes is " << w << std::endl;
+            fflush(stdout);
+        }
+        write(new_socket , res , ffstrlen(res));
+        std::cout << "\n------------------Hello message sent-------------------"  << std::endl;
         std::cout << "the connecting entity address is --> : "\
         << address.sin_addr.s_addr << std::endl;
         close(new_socket);

@@ -1,48 +1,5 @@
 HTTP/1.1 200 OK
-Content-Type: text/html
+Content-Type: text/plain
+Content-Length: 15
 
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Hyperlink Example</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f2f2f2;
-      margin: 0;
-      padding: 20px;
-    }
-
-    h1 {
-      color: #333;
-    }
-
-    .container {
-      max-width: 500px;
-      margin: 0 auto;
-      background-color: #fff;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      padding: 20px;
-    }
-
-    .link {
-      display: inline-block;
-      background-color: #007bff;
-      color: #fff;
-      padding: 10px 20px;
-      text-decoration: none;
-      border-radius: 5px;
-    }
-
-    .link:hover {
-      background-color: #0056b3;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>WAFYAA JOOO33</h1>
-  </div>
-</body>
-</html>
+yarbimaykhdemch
