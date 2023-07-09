@@ -41,6 +41,7 @@ const char    *readfile()
         r = r + l;
         l.clear();
     }
+    k.close();
     return (r.c_str());
 }
 
