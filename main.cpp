@@ -46,7 +46,6 @@ const char    *readfile()
 
 int main(int argc, char const *argv[])
 {
-    std::ofstream fototita("fototita.jpeg",std::ofstream::binary);
 
     long long w;
     const char *res = readfile();
@@ -71,7 +70,7 @@ int main(int argc, char const *argv[])
     
     setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opts, sizeof(int));
     memset(address.sin_zero, '\0', sizeof address.sin_zero);
-    
+    std::string empt_line = "\r\n\r\n"; 
     
     if (bind(server_fd, (struct sockaddr *)&address, sizeof(address))<0)
     {
@@ -84,6 +83,10 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE);
     }
     fcntl(new_socket, F_SETFL, O_NONBLOCK);
+    std::ofstream fototita("fototita.jpeg");
+    int start;
+    int found = 0;
+    int flag = 0;
     while(1)
     {
         std::cout <<  "\n+++++++ Waiting for new connection ++++++++\n" << std::endl;
@@ -95,24 +98,45 @@ int main(int argc, char const *argv[])
         }
         while (valread)
         {
-            char buffer[30000] = {0};
+            flag = 2;
+            char *buffer = new char[1024];
+            char *boddy;
             std::cout << "here" << std::endl;
             fflush(stdout);
-            valread = read( new_socket , buffer, 30000);
+            valread = read( new_socket , buffer, 1024);
             if (valread == -1)
             {
                 perror("read failed");
                 exit(0);
             }
-            std::string requ = std::string(buffer, valread);
-            // fototita.write(buffer, valread);
-            fototita << requ;
-            w += valread;
-            std::cout << requ;
-            std::cout << "\n---the number of written bytes is " << w << std::endl;
-            fflush(stdout);
+            if (!valread)
+                continue;
+            std::string sbuff(buffer);
+            if (!found && (start = sbuff.find(empt_line)) != std::string::npos)
+            {
+                flag = 0;
+                found = 1;
+                delete[] buffer;
+                buffer = const_cast <char *> (sbuff.c_str());
+                buffer += (start + 4);
+                valread -= (start + 4);
+                std::cout << "HEADER=" << start << " BYTES" << std::endl;
+                fflush(stdout);
+            }
+            if (found)
+            {
+                std::string requ = std::string(buffer, valread);
+                fototita.write(buffer, valread);
+                w += valread;
+                std::cout << requ;
+                std::cout << "\n---the number of written bytes is " << valread << std::endl;
+                std::cout << "\n---the total is " << w << std::endl;
+                fflush(stdout);
+            }
+            if (flag)
+                delete[] buffer;
         }
-        write(new_socket , res , ffstrlen(res));
+        // write(new_socket , res , ffstrlen(res));
         std::cout << "\n------------------Hello message sent-------------------"  << std::endl;
         std::cout << "the connecting entity address is --> : "\
         << address.sin_addr.s_addr << std::endl;
