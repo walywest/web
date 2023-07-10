@@ -73,14 +73,13 @@ int main()
 // to be copied to POST
 //*****************
     std::ofstream fototita("fototita.mp4");
+//*****************
     int start;
     int found = 0;
     int flag = 0;
-//*****************
     while(1)
     {
         std::cout <<  "\n+++++++ Waiting for new connection ++++++++\n" << std::endl;
-        fflush(stdout);
         if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen))<0)
         {
             perror("In accept");
@@ -88,7 +87,7 @@ int main()
         }
 // to be copied to POST
 //*****************
-        while (w < 78594806) //body lentgh
+        while (w < 78594806) //RWV //while should become an if
         {
             flag = 2;
             char *buffer = new char[1024];
@@ -108,15 +107,15 @@ int main()
                 found = 1;
                 delete[] buffer;
                 buffer = const_cast <char *> (sbuff.c_str());
+                write(1, buffer, start);
                 buffer += (start + 4);
                 valread -= (start + 4);
-                // std::cout << "HEADER=" << start << " BYTES" << std::endl;
-                // fflush(stdout);
+                std::cout << "HEADER=" << start << " BYTES" << std::endl;
             }
-            if (found)
+            if (found) // check for transer_type
             {
-                std::string requ = std::string(buffer, valread);
-                fototita.write(buffer, valread);
+                // std::string requ = std::string(buffer, valread);
+                _post(buffer, valread, "likan.mp4"); // RWV
                 w += valread;
                 // std::cout << requ;
                 // std::cout << "\n---the number of written bytes is " << valread << std::endl;

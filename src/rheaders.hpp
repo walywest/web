@@ -17,4 +17,5 @@
 #include <fstream>
 
 
+void    _post(char *buffer, size_t len, std::string name);
 // size_t  ffstrlen(const char *str);
