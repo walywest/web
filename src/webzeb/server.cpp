@@ -64,7 +64,6 @@ void	server::startingConnection(int domain, int type, int protocol, int port) {
 	std::cout << "Success ! ..." << std::endl;
 }
 
-
 int	server::pre_parse(pars& p)
 {
 	char	buffer[1024] = {0};
@@ -72,16 +71,20 @@ int	server::pre_parse(pars& p)
 	std::cout << buffer << std::endl; //might not be null-terminated POTENTIAL SEG_FAULT;
 	if (p.valread != -1 && p.valread)
 	{
-        std::string buff(buffer, (size_t)p.valread);
 		if (buff.find("POST") == 0)
 		{
-			p.t_valread += p.valread;
+			while (r_err(p.valread) && p.max == H_M)
+			{
+				std::string buff(buffer, (size_t)p.valread);
+				p.header += buff;
+				p.upd_valread();
+				p.valread = read(clientSocket, buffer, 1024);
+			}
 			return (2);
-		}
 		}
 		else
 		{
-			p.t_valread += p.valread;
+			p.upd_valread();
 			return (1);
 			// 	//**** associate with number 2;
 				parseRequest(buffer);

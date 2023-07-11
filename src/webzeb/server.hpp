@@ -20,6 +20,8 @@
 #define backlog 10
 #define test_response "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!"
 #define test_root "../webzeb"
+#define M_H 8000
+#define M_B 8000000
 
 class pars {
 	public :
@@ -27,10 +29,12 @@ class pars {
 		ssize_t t_valread;
 		ssize_t valread;
 		ssize_t cont_l;
+		ssize_t max;
 		std::string header;
 		std::string body_chunk;
 		std::map<std::string, std::string> hdrs;
-	pars();
+		pars();
+		void	upd_valread();
 };
 
 class server {
@@ -50,7 +54,7 @@ class server {
 		/******/
 		void	split_head_body(char *buffer, pars *p);
 		int		pre_parse(pars& p);
-		void	post_parse(pars *p);
+		void	post_parse(pars& p);
 		/******/
 
 		void			parseRequest(char* buffer);
@@ -74,6 +78,8 @@ class server {
 		struct sockaddr_in	get_address();
 };
 
-int	ft_strlen(char* str);
+int		ft_strlen(char* str);
+int		r_err(ssize_t d);
+void    string_split(std::string& m, std::string& s1, std::string& s2, const char *lim);
 
 #endif
