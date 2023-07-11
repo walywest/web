@@ -8,13 +8,13 @@ void    string_split(std::string& m, std::string& s1, std::string& s2, std::stri
     if ((h_l = m.find(lim)) != std::string::npos)
     {
         s1 += m.substr(0, h_l);
-        s2 += m.substr(h_l + lim.size(), m.size());
+        s2 += m.substr(h_l + lim.size());
     }
-    else
-    {
-        perror("delimiter not found:");
-		throw std::runtime_error(strerror(errno));
-    }
+    // else
+    // {
+    //     perror("delimiter not found:");
+	// 	throw std::runtime_error(strerror(errno));
+    // }
 }
 
 void    server::split_head_body(char *buffer, pars *p)

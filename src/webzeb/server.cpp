@@ -82,6 +82,7 @@ int	server::pre_parse(pars& p)
 				r_err(p.valread);
 				split_head_body(buffer, &p);
 			}
+			p.upd_valread();
 			return (2);
 		}
 		else

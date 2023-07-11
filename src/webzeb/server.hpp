@@ -15,6 +15,7 @@
 #include <fstream>
 #include <map>
 #include <iostream>
+#include <istream>
 #include <string>
 
 #define _port 8080
