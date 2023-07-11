@@ -13,6 +13,7 @@
 #include <dirent.h>
 #include <sstream>
 #include <fstream>
+#include <map>
 
 #define _port 8080
 #define localhost "127.0.0.1"
@@ -20,12 +21,16 @@
 #define test_response "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!"
 #define test_root "../webzeb"
 
-class post_meth{
-	private :
-		// size_t t_valread;
-		// size_t valread;
-		// size_t cont_l;
+class pars {
 	public :
+		int type;
+		ssize_t t_valread;
+		ssize_t valread;
+		ssize_t cont_l;
+		std::string header;
+		std::string body_chunk;
+		std::map<std::string, std::string> hdrs;
+	pars();
 };
 
 class server {
@@ -43,9 +48,9 @@ class server {
 
 		// POST METHOD
 		/******/
-void	server::split_head_body(char *buffer)
-		void			pre_parse();
-		void			POST_parse();
+		void	split_head_body(char *buffer, pars *p);
+		int		pre_parse(pars& p);
+		void	post_parse(pars *p);
 		/******/
 
 		void			parseRequest(char* buffer);

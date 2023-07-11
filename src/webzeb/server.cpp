@@ -26,7 +26,7 @@ server&    server::operator=(server const & obj) {
 	// serverSocket = obj.serverSocket;
 	// connection = obj.connection;
 	// addr = obj.addr;
-	(void)obj; 
+	(void)obj;
 	return *this;
 }
 
@@ -64,48 +64,47 @@ void	server::startingConnection(int domain, int type, int protocol, int port) {
 	std::cout << "Success ! ..." << std::endl;
 }
 
-// ********************** POST METHOD 
 
-void	server::split_head_body(char *buffer)
+int	server::pre_parse(pars& p)
 {
-
-}
-
-void	server::POST_parse()
-{
-
-}
-
-// ****** END OF POST METHOD 
-
-void			server::pre_parse()
-{
-	size_t	valread;
 	char	buffer[1024] = {0};
-	valread = read(clientSocket, buffer, 1024);
+	p.valread = read(clientSocket, buffer, 1024);
 	std::cout << buffer << std::endl; //might not be null-terminated POTENTIAL SEG_FAULT;
-	if (valread != -1 && valread)
+	if (p.valread != -1 && p.valread)
 	{
-        std::string buff(buffer, valread);
+        std::string buff(buffer, (size_t)p.valread);
 		if (buff.find("POST") == 0)
 		{
-			//call post parsing;
+			p.t_valread += p.valread;
+			return (2);
+		}
 		}
 		else
 		{
-			// 	//**** this is Zineb's part
+			p.t_valread += p.valread;
+			return (1);
+			// 	//**** associate with number 2;
 				parseRequest(buffer);
 				std::cout << "\n---------------- connection closed ----------------\n";
 				close(clientSocket);
 			// 	//*****
 		}
 	}
-	else if (valread != -1)
+	else if (p.valread != -1)
+	{
+        perror("error reading from socket");
 		throw std::runtime_error(strerror(errno));
+	}
+	else
+	{
+        perror("server hanging while reading form socket");
+		throw std::runtime_error(strerror(errno));
+	}
 	exit(0);
 }
 
 void	server::startingServer() {
+	pars p;
 	while (1) {
 		std::cout << "\n---------------- Waiting for a new connection ----------------\n";
 		if ((clientSocket = accept(serverSocket, (struct sockaddr*)&address, &addrLength)) < 0)
@@ -114,7 +113,18 @@ void	server::startingServer() {
 		// NOTE2 since starting the server is a common task i will be making changes to this function to call ur parsing if i don't find POST in the initial buffer
 		//as well as Ghita also will be making simple but important changes for the multiplexing;
 		//pre-parsing function ===>
-		void			pre_parse(); //this would call the right parsing for the rest of the reading
+		if (!p.type)
+			p.type = pre_parse(); //this would call the right parsing for the rest of the reading
+		switch (p.type)
+		{
+			case 1
+				post_parse()
+				break;	
+			case 2
+				break;	
+			default:
+				break;
+		}
 	}
 }
 
