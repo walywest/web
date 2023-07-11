@@ -1,5 +1,5 @@
 FLAGS=-Wall -Wextra -Werror -std=c++98 -fsanitize=address -g
-NAME=webserver
+NAME=webserv
 
 SRC=main.cpp\
 
