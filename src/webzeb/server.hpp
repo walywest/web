@@ -14,6 +14,8 @@
 #include <sstream>
 #include <fstream>
 #include <map>
+#include <iostream>
+#include <string>
 
 #define _port 8080
 #define localhost "127.0.0.1"
@@ -22,9 +24,12 @@
 #define test_root "../webzeb"
 #define M_H 8000
 #define M_B 8000000
+#define UPLOADED_FILE "fototita.jpeg"
+#define	FILE_SIZE	9000 
 
 class pars {
 	public :
+		int		p_h;
 		int type;
 		ssize_t t_valread;
 		ssize_t valread;

@@ -69,16 +69,18 @@ int	server::pre_parse(pars& p)
 	char	buffer[1024] = {0};
 	p.valread = read(clientSocket, buffer, 1024);
 	std::cout << buffer << std::endl; //might not be null-terminated POTENTIAL SEG_FAULT;
+	std::string buff(buffer, (size_t)p.valread);
 	if (p.valread != -1 && p.valread)
 	{
 		if (buff.find("POST") == 0)
 		{
-			while (r_err(p.valread) && p.max == H_M)
+			while (p.p_h == 1)
 			{
-				std::string buff(buffer, (size_t)p.valread);
-				p.header += buff;
 				p.upd_valread();
+				p.header += std::string(buffer, (size_t)p.valread);
 				p.valread = read(clientSocket, buffer, 1024);
+				r_err(p.valread);
+				split_head_body(buffer, &p);
 			}
 			return (2);
 		}
@@ -86,11 +88,6 @@ int	server::pre_parse(pars& p)
 		{
 			p.upd_valread();
 			return (1);
-			// 	//**** associate with number 2;
-				parseRequest(buffer);
-				std::cout << "\n---------------- connection closed ----------------\n";
-				close(clientSocket);
-			// 	//*****
 		}
 	}
 	else if (p.valread != -1)
@@ -117,14 +114,25 @@ void	server::startingServer() {
 		//as well as Ghita also will be making simple but important changes for the multiplexing;
 		//pre-parsing function ===>
 		if (!p.type)
-			p.type = pre_parse(); //this would call the right parsing for the rest of the reading
+			p.type = pre_parse(p); //this would call the right parsing for the rest of the reading
 		switch (p.type)
 		{
-			case 1
-				post_parse()
+			case 1:
+				post_parse(p);
 				break;	
-			case 2
+			case 2:
+			{
+
+			// 	//**** associate with number 2;
+			char buffer[1024] = {0};
+			p.valread = read(clientSocket, buffer, 1024);
+			r_err(p.valread);
+				parseRequest(buffer);
+				std::cout << "\n---------------- connection closed ----------------\n";
+				close(clientSocket);
+			// 	//*****
 				break;	
+			}
 			default:
 				break;
 		}

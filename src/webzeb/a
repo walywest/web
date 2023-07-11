@@ -1,0 +1,26 @@
+post_pars.cpp:25:11: error: no matching function for call to 'getline'
+    if (!(getline(input, p->header, "\r\n\r\n")))
+          ^~~~~~~
+/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/stdio.h:359:9: note: candidate function not viable: no known conversion from 'std::istringstream' (aka 'basic_istringstream<char>') to 'char **' for 1st argument
+ssize_t getline(char ** __restrict __linep, size_t * __restrict __linecapp, FILE * __restrict __stream) __OSX_AVAILABLE_STARTING(__MAC_10_7, __IPHONE_4_3);
+        ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:1509:1: note: candidate template ignored: deduced conflicting types for parameter '_CharT' ('char' vs. 'const char *')
+getline(basic_istream<_CharT, _Traits>& __is,
+^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/istream:1563:1: note: candidate function template not viable: requires 2 arguments, but 3 were provided
+getline(basic_istream<_CharT, _Traits>& __is,
+^
+post_pars.cpp:70:26: error: expression result unused [-Werror,-Wunused-value]
+    std::string sbuff = (buffer, p.valread);
+                         ^~~~~~
+post_pars.cpp:70:17: error: no viable conversion from 'ssize_t' (aka 'long') to 'std::string' (aka 'basic_string<char, char_traits<char>, allocator<char> >')
+    std::string sbuff = (buffer, p.valread);
+                ^       ~~~~~~~~~~~~~~~~~~~
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/string:800:5: note: candidate constructor not viable: no known conversion from 'ssize_t' (aka 'long') to 'const std::__1::basic_string<char> &' for 1st argument
+    basic_string(const basic_string& __str);
+    ^
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/string:818:5: note: candidate constructor template not viable: no known conversion from 'ssize_t' (aka 'long') to 'const char *' for 1st argument
+    basic_string(const _CharT* __s) {
+    ^
+3 errors generated.
+make: *** [webserv] Error 1

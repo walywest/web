@@ -6,7 +6,7 @@ CPPFLAGS	=	-Wall -Wextra -Werror -std=c++98
 
 # CPPFLAGS	+=	-g -fsanitize=address
 
-SRC			=	main.cpp server.cpp pars_post.cpp
+SRC			=	main.cpp server.cpp post_pars.cpp
 
 OBJ			=	$(SRC:.cpp=.o)
 

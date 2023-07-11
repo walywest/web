@@ -10,23 +10,40 @@ void    string_split(std::string& m, std::string& s1, std::string& s2, std::stri
         s1 += m.substr(0, h_l);
         s2 += m.substr(h_l + lim.size(), m.size());
     }
+    else
+    {
+        perror("delimiter not found:");
+		throw std::runtime_error(strerror(errno));
+    }
 }
 
 void    server::split_head_body(char *buffer, pars *p)
 {
     size_t  h_l;
     std::string sbuff(buffer, p->valread);
-    if ((h_l = sbuff.find("\r\n\r\n")) != std::string::npos)
+    std::istringstream input(sbuff);
+    if (!(getline(input, p->header, "\r\n\r\n")))
     {
+        perror("error in the inputstream when splitting the header from boddy");
+		throw std::runtime_error(strerror(errno));
+    }
+    if (input.rdbuf()->in_avail()) //later would be compared to match with content-length
+    {
+        p->p_h = 1;
         p->max = M_B;
-        p->header += sbuff.substr(0, h_l);
-        p->body_chunk += sbuff.substr(h_l + 4, p->valread - h_l - 4);
+        p->body_chunk += input.rdbuf()->str();
     }
     else
     {
-        perror("mal formed POST request");
+        perror("No body found!");
 		throw std::runtime_error(strerror(errno));
     }
+    // if (h_l = sbuff.find("\r\n\r\n")) != std::string::npos)
+    // {
+    //     p->max = M_B;
+    //     p->header += sbuff.substr(0, h_l);
+    //     p->body_chunk += sbuff.substr(h_l + 4, p->valread - h_l - 4);
+    // }
 }
 
 int r_err(ssize_t d)
@@ -46,24 +63,31 @@ int r_err(ssize_t d)
 
 void	server::post_parse(pars& p)
 {
+    //add the checks here
+    /********/
+    /********/
+    /********/
+    std::ofstream   outp(UPLOADED_FILE);
+    size_t  w = 0;
     char    buffer[1024] = {0};
-    p.valread = read(clientSocket, buffer, 1024);
-    if (p.valread < 0)
+
+    if (p.body_chunk.size())
     {
-        perror("error reading from socket");
-		throw std::runtime_error(strerror(errno));
+        outp.write(UPLOADED_FILE, p.body_chunk.size());
+        p.body_chunk.clear();
     }
-    if (p.valread)
+    while (w <= FILE_SIZE)
     {
+        p.valread = read(clientSocket, buffer, 1024);
+        r_err(p.valread);
+        w += p.valread;
         p.upd_valread();
-        std::string sbuff = (buffer, p.valread);
-        std::istringstream inp(sbuff);
+        //check if its chunked later;
+        outp.write(buffer, p.valread);
+        outp.flush();
     }
-    else
-    {
-        perror("server hanging while reading form socket");
-		throw std::runtime_error(strerror(errno));
-    }
+    //send HTTP OK 2000 here;
+    outp.close();
 }
 
 pars::pars()
@@ -73,6 +97,7 @@ pars::pars()
     valread = 0;
     cont_l = 0;
     max = M_H;
+    p_h = 0;
 }
 
 void	pars::upd_valread()
