@@ -27,6 +27,8 @@
 #define M_B 8000000
 #define UPLOADED_FILE "fototita.jpeg"
 #define	FILE_SIZE	9000 
+int		r_err(ssize_t d);
+void    string_split(std::string& m, std::string& s1, std::string& s2, const char *lim);
 
 class pars {
 	public :
@@ -36,7 +38,7 @@ class pars {
 		ssize_t valread;
 		ssize_t cont_l;
 		ssize_t max;
-		std::string header;
+	std::string header;
 		std::string body_chunk;
 		std::map<std::string, std::string> hdrs;
 		pars();
@@ -58,9 +60,10 @@ class server {
 
 		// POST METHOD
 		/******/
-		void	split_head_body(char *buffer, pars *p);
+		void    string_split(std::string& m, std::string& s1, std::string& s2, std::string& lim);
 		int		pre_parse(pars& p);
 		void	post_parse(pars& p);
+		void    server::split_head_body(char *buffer, pars *p);
 		/******/
 
 		void			parseRequest(char* buffer);
@@ -85,7 +88,5 @@ class server {
 };
 
 int		ft_strlen(char* str);
-int		r_err(ssize_t d);
-void    string_split(std::string& m, std::string& s1, std::string& s2, const char *lim);
 
 #endif

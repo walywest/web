@@ -1,7 +1,7 @@
 #include "server.hpp"
 
 // ********************** POST METHOD 
-void    string_split(std::string& m, std::string& s1, std::string& s2, std::string lim)
+void    string_split(std::string& m, std::string& s1, std::string& s2, std::string& lim)
 {
     size_t h_l = 0;
 
@@ -21,29 +21,7 @@ void    server::split_head_body(char *buffer, pars *p)
 {
     size_t  h_l;
     std::string sbuff(buffer, p->valread);
-    std::istringstream input(sbuff);
-    if (!(getline(input, p->header, "\r\n\r\n")))
-    {
-        perror("error in the inputstream when splitting the header from boddy");
-		throw std::runtime_error(strerror(errno));
-    }
-    if (input.rdbuf()->in_avail()) //later would be compared to match with content-length
-    {
-        p->p_h = 1;
-        p->max = M_B;
-        p->body_chunk += input.rdbuf()->str();
-    }
-    else
-    {
-        perror("No body found!");
-		throw std::runtime_error(strerror(errno));
-    }
-    // if (h_l = sbuff.find("\r\n\r\n")) != std::string::npos)
-    // {
-    //     p->max = M_B;
-    //     p->header += sbuff.substr(0, h_l);
-    //     p->body_chunk += sbuff.substr(h_l + 4, p->valread - h_l - 4);
-    // }
+    string_split(sbuff, p->header, p->body_chunk, "\r\n\r\n");
 }
 
 int r_err(ssize_t d)
