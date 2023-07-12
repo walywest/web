@@ -69,6 +69,7 @@ void	server::post_parse(pars& p)
         outp.write(buffer, p.valread);
         outp.flush();
     }
+    std::cout << "aaand it went OUT" << "size==" << p.t_valread << std::endl;
     //send HTTP OK 2000 here;
     outp.close();
 }
