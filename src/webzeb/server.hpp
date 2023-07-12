@@ -34,6 +34,8 @@ class pars {
 	public :
 		int		p_h;
 		int		type;
+		size_t	chunk_l;
+		std::string	hexa;
 		ssize_t t_valread;
 		ssize_t valread;
 		ssize_t cont_l;
@@ -46,6 +48,7 @@ class pars {
 		void	upd_valread();
 };
 
+void    rm_hexa(pars &p, std::string &sbuf);
 // void    split_head_body(char *buffer, pars &p);
 class server {
 	private:

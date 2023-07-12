@@ -12,11 +12,6 @@ int string_split(std::string& m, std::string& s1, std::string& s2, std::string& 
         return (1);
     }
     return (0);
-    // else
-    // {
-    //     perror("delimiter not found:");
-	// 	throw std::runtime_error(strerror(errno));
-    // }
 }
 
 void    server::split_head_body(char *buffer, pars &p)
@@ -46,10 +41,26 @@ int r_err(ssize_t d)
     return (1);
 }
 
+void    rm_hexa(pars &p)
+{
+    std::istringstream body(p.body_chunk);
+    if (p.body_chunk.find("\r\n") != 0)
+    {
+
+    }
+    else
+    {
+        perror("Bad Request");
+		throw std::runtime_error(strerror(errno));
+    }
+}
+
 void	server::post_parse(pars& p)
 {
     //add the checks here
-    /********/
+    /********/ //check if the body doesn't exist
+    //later check if the length of the body that was written is equal to the Content-Length
+
     /********/
     /********/
     std::ofstream   outp(UPLOADED_FILE);
@@ -63,7 +74,13 @@ void	server::post_parse(pars& p)
 
     if (p.body_chunk.size())
     {
+        if (p.header.find("Transfer-Encoding: chunked"))
+        {
+            rm_hexa(p);
+            std::cout << "right" << std::endl;
+        }
         outp.write(p.body_chunk.c_str(), p.body_chunk.size());
+        outp.flush();
         p.body_chunk.clear();
     }
     while (w <= FILE_SIZE)

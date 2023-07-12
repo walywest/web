@@ -214,4 +214,3 @@ void	server::GET(std::string& url) {
 		generateResponse(getContent(path), "plain");	
 	}
 }
-
