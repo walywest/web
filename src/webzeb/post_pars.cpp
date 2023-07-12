@@ -17,11 +17,11 @@ void    string_split(std::string& m, std::string& s1, std::string& s2, std::stri
     // }
 }
 
-void    server::split_head_body(char *buffer, pars *p)
+void    server::split_head_body(char *buffer, pars &p)
 {
-    size_t  h_l;
-    std::string sbuff(buffer, p->valread);
-    string_split(sbuff, p->header, p->body_chunk, "\r\n\r\n");
+    std::string sbuff(buffer, p.valread);
+    std::string lim = "\r\n\r\n";
+    string_split(sbuff, p.header, p.body_chunk, lim);
 }
 
 int r_err(ssize_t d)
@@ -46,6 +46,11 @@ void	server::post_parse(pars& p)
     /********/
     /********/
     std::ofstream   outp(UPLOADED_FILE);
+    if (!outp)
+    {
+        perror("failed openning file");
+		throw std::runtime_error(strerror(errno));
+    }
     size_t  w = 0;
     char    buffer[1024] = {0};
 

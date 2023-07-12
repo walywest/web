@@ -25,26 +25,28 @@
 #define test_root "../webzeb"
 #define M_H 8000
 #define M_B 8000000
-#define UPLOADED_FILE "fototita.jpeg"
-#define	FILE_SIZE	9000 
+#define UPLOADED_FILE "fototita.mp4"
+#define	FILE_SIZE	38610886
 int		r_err(ssize_t d);
 void    string_split(std::string& m, std::string& s1, std::string& s2, const char *lim);
 
 class pars {
 	public :
 		int		p_h;
-		int type;
+		int		type;
 		ssize_t t_valread;
 		ssize_t valread;
 		ssize_t cont_l;
 		ssize_t max;
-	std::string header;
+		std::string header;
 		std::string body_chunk;
 		std::map<std::string, std::string> hdrs;
+		std::string	host;
 		pars();
 		void	upd_valread();
 };
 
+// void    split_head_body(char *buffer, pars &p);
 class server {
 	private:
 		/*-------------------------------Data  memebers----------------------------*/
@@ -60,10 +62,10 @@ class server {
 
 		// POST METHOD
 		/******/
-		void    string_split(std::string& m, std::string& s1, std::string& s2, std::string& lim);
+		// void    string_split(std::string& m, std::string& s1, std::string& s2, std::string& lim);
 		int		pre_parse(pars& p);
 		void	post_parse(pars& p);
-		void    server::split_head_body(char *buffer, pars *p);
+		void    split_head_body(char *buffer, pars &p);
 		/******/
 
 		void			parseRequest(char* buffer);

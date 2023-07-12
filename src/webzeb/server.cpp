@@ -80,15 +80,15 @@ int	server::pre_parse(pars& p)
 				p.header += std::string(buffer, (size_t)p.valread);
 				p.valread = read(clientSocket, buffer, 1024);
 				r_err(p.valread);
-				split_head_body(buffer, &p);
+				split_head_body(buffer, p);
 			}
 			p.upd_valread();
-			return (2);
+			return (1);
 		}
 		else
 		{
 			p.upd_valread();
-			return (1);
+			return (2);
 		}
 	}
 	else if (p.valread != -1)
@@ -116,6 +116,7 @@ void	server::startingServer() {
 		//pre-parsing function ===>
 		if (!p.type)
 			p.type = pre_parse(p); //this would call the right parsing for the rest of the reading
+		std::cout << "type of parsing >>" << p.type << std::endl;
 		switch (p.type)
 		{
 			case 1:
