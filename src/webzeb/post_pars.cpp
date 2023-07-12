@@ -1,7 +1,7 @@
 #include "server.hpp"
 
 // ********************** POST METHOD 
-void    string_split(std::string& m, std::string& s1, std::string& s2, std::string& lim)
+int string_split(std::string& m, std::string& s1, std::string& s2, std::string& lim)
 {
     size_t h_l = 0;
 
@@ -9,7 +9,9 @@ void    string_split(std::string& m, std::string& s1, std::string& s2, std::stri
     {
         s1 += m.substr(0, h_l);
         s2 += m.substr(h_l + lim.size());
+        return (1);
     }
+    return (0);
     // else
     // {
     //     perror("delimiter not found:");
@@ -21,7 +23,12 @@ void    server::split_head_body(char *buffer, pars &p)
 {
     std::string sbuff(buffer, p.valread);
     std::string lim = "\r\n\r\n";
-    string_split(sbuff, p.header, p.body_chunk, lim);
+    if (string_split(sbuff, p.header, p.body_chunk, lim))
+    {
+        p.p_h = 1;
+        p.max = M_B;
+        std::cout << "header split from body" << std::endl;
+    }
 }
 
 int r_err(ssize_t d)
@@ -56,7 +63,7 @@ void	server::post_parse(pars& p)
 
     if (p.body_chunk.size())
     {
-        outp.write(UPLOADED_FILE, p.body_chunk.size());
+        outp.write(p.body_chunk.c_str(), p.body_chunk.size());
         p.body_chunk.clear();
     }
     while (w <= FILE_SIZE)
@@ -69,7 +76,6 @@ void	server::post_parse(pars& p)
         outp.write(buffer, p.valread);
         outp.flush();
     }
-    std::cout << "aaand it went OUT" << "size==" << p.t_valread << std::endl;
     //send HTTP OK 2000 here;
     outp.close();
 }
@@ -90,7 +96,7 @@ void	pars::upd_valread()
     if (t_valread > max)
     {
        perror("max value reached ===>"); 
-       std::cout << max << std::endl;
+       std::cout << max << "< " << t_valread << " in p_h = " << p_h << std::endl;
        throw std::runtime_error(strerror(errno));
     }
 }

@@ -68,21 +68,22 @@ int	server::pre_parse(pars& p)
 {
 	char	buffer[1024] = {0};
 	p.valread = read(clientSocket, buffer, 1024);
-	std::cout << buffer << std::endl; //might not be null-terminated POTENTIAL SEG_FAULT;
 	std::string buff(buffer, (size_t)p.valread);
 	if (p.valread != -1 && p.valread)
 	{
 		if (buff.find("POST") == 0)
 		{
-			while (p.p_h == 1)
+			p.upd_valread();
+			split_head_body(buffer, p);
+			while (!p.p_h)
 			{
-				p.upd_valread();
-				p.header += std::string(buffer, (size_t)p.valread);
+				//possible linear config checks 
 				p.valread = read(clientSocket, buffer, 1024);
 				r_err(p.valread);
+				p.upd_valread();
 				split_head_body(buffer, p);
 			}
-			p.upd_valread();
+				//possible linear config checks 
 			return (1);
 		}
 		else
@@ -91,7 +92,7 @@ int	server::pre_parse(pars& p)
 			return (2);
 		}
 	}
-	else if (p.valread != -1)
+	else if (p.valread)
 	{
         perror("error reading from socket");
 		throw std::runtime_error(strerror(errno));
@@ -101,7 +102,6 @@ int	server::pre_parse(pars& p)
         perror("server hanging while reading form socket");
 		throw std::runtime_error(strerror(errno));
 	}
-	exit(0);
 }
 
 void	server::startingServer() {
@@ -124,11 +124,10 @@ void	server::startingServer() {
 				break;	
 			case 2:
 			{
-
-			// 	//**** associate with number 2;
-			char buffer[1024] = {0};
-			p.valread = read(clientSocket, buffer, 1024);
-			r_err(p.valread);
+				// 	//**** associate with number 2;
+				char buffer[1024] = {0};
+				p.valread = read(clientSocket, buffer, 1024);
+				r_err(p.valread);
 				parseRequest(buffer);
 				std::cout << "\n---------------- connection closed ----------------\n";
 				close(clientSocket);

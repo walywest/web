@@ -24,11 +24,11 @@
 #define test_response "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!"
 #define test_root "../webzeb"
 #define M_H 8000
-#define M_B 8000000
+#define M_B 386108869
 #define UPLOADED_FILE "fototita.mp4"
 #define	FILE_SIZE	38610886
 int		r_err(ssize_t d);
-void    string_split(std::string& m, std::string& s1, std::string& s2, const char *lim);
+int string_split(std::string& m, std::string& s1, std::string& s2, std::string& lim);
 
 class pars {
 	public :
