@@ -41,7 +41,7 @@ struct sockaddr_in	server::get_address() {
 /*----------------------------------------------- the actual work ------------------------------------------------------*/
 
 void	server::startingConnection(int domain, int type, int protocol, int port) {
-	int	opts = 0;
+	int	opts = 1;
 	std::cout << "Starting ..." << std::endl;
 	memset((char *)&address, 0, sizeof(address));
 	address.sin_family = domain; // AF_INET
@@ -79,12 +79,12 @@ void	server::startingServer() {
 			throw std::runtime_error(strerror(errno));
 		// p.valread = read(clientSocket, r_buff, 1024);
 		p.valread = read(clientSocket, r_buff, 1024);
+		std::cout << "value read is == " << p.valread << std::endl;
 		if (p.valread < 0)
 			throw std::runtime_error("eof reached");
 		if (!p.valread)
 			throw std::runtime_error("connection closed");
 		std::cout << "\n------------------- New connection accepted -------------------\n";
-		std::cout << r_buff << std::endl;
 		parseRequest(r_buff, p);
 		std::cout << "\n---------------- connection closed ----------------\n";
 		close(clientSocket);
@@ -93,10 +93,13 @@ void	server::startingServer() {
 
 void	server::parseRequest(char* buffer, pars &p) {
 	std::string	method, url, httpVersion, line, body;
-	std::stringstream ss(buffer, p.valread);
+	std::istringstream ss(buffer, p.valread);
+	std::string deb(buffer, p.valread);
+	std::cout << "debug string ==> |" << deb << "|" << std::endl;
 	if (ss.eof() || ss.tellg() != std::stringstream::pos_type(0))
 		throw std::runtime_error("Failed to read the request.");
 	// Request line
+	std::cout << "teeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest" << std::endl;
 	getline(ss, method, ' ');
 	getline(ss, url, ' ');
 	getline(ss, httpVersion, '\r');
@@ -111,10 +114,13 @@ void	server::parseRequest(char* buffer, pars &p) {
 				getline(ss, body);
 				break;
 		}
-		p.headers[line.substr(1, line.find(":"))] = line.substr(line.find(":") + 1, line.length()); // protect find()
+		p.headers[line.substr(1, line.find(" : "))] = line.substr(line.find(" : ") + 3, line.length()); // protect find()
 	}
 	if (httpVersion != "HTTP/1.1")
+	{
+		std::cout << "|" << httpVersion  << "|"<< std::endl;
 		throw std::runtime_error("Invalid http version.");
+	}
 	if (method == "GET")
 		GET(url, p.headers);
 	else if (method == "POST")

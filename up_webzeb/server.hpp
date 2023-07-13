@@ -16,6 +16,8 @@
 #include <map>
 #include <iostream>
 #include <istream>
+#include <ostream>
+#include <fstream>
 #include <string>
 #include <sys/poll.h>
 
@@ -30,6 +32,7 @@
 #define UPLOADED_FILE "fototita.mp4"
 #define	FILE_SIZE	38610886
 
+
 class pars {
 	public :
 		int		p_h;
@@ -40,21 +43,20 @@ class pars {
 		ssize_t valread;
 		ssize_t cont_l;
 		ssize_t max;
-		std::string header;
-		std::string body_chunk;
+		size_t s;
+		std::string	body_chunk;
 		std::map<std::string, std::string> headers;
 		std::pair<std::string, std::string> key_val;
+		std::ofstream			upload_file;
 		std::string	host;
 		pars();
 		void	upd_valread();
 };
 
 int	r_err(ssize_t d, pars &p);
-int string_split(std::string& m, std::string& s1, std::string& s2, std::string& lim);
 
 
 void    rm_hexa(pars &p, std::string &sbuf);
-// void    split_head_body(char *buffer, pars &p);
 class server {
 	private:
 		/*-------------------------------Data  memebers----------------------------*/
