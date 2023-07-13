@@ -63,8 +63,8 @@ void	server::startingConnection(int domain, int type, int protocol, int port) {
 }
 
 void	server::startingServer() {
-	pars			p; //this is the struct i addded to store parsing infos;
-	// int 			r_val;
+	// pars			p; //this is the struct i addded to store parsing infos;
+	int 			r_val;
 	char			r_buff[1024] = {0};
 	struct pollfd	fd_poll[c_num];
 	int				nfds;
@@ -77,12 +77,13 @@ void	server::startingServer() {
 			throw std::runtime_error(strerror(errno));
 		if ((fd_poll[0].revents & POLLIN) && (clientSocket = accept(serverSocket, (struct sockaddr*)&address, &addrLength)) < 0)
 			throw std::runtime_error(strerror(errno));
-		p.valread = read(clientSocket, r_buff, 1024);
-		// if (r_val < 0)
-		// 	throw std::runtime_error("eof reached");
-		// if (!r_val)
-		// 	throw std::runtime_error("connection closed");
-		r_err(p.valread, p);
+		// p.valread = read(clientSocket, r_buff, 1024);
+		r_val = read(clientSocket, r_buff, 1024);
+		if (r_val < 0)
+			throw std::runtime_error("eof reached");
+		if (!r_val)
+			throw std::runtime_error("connection closed");
+		// r_err(p.valread, p);
 		std::cout << "\n------------------- New connection accepted -------------------\n";
 		std::cout << r_buff << std::endl;
 		parseRequest(r_buff);
