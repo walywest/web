@@ -47,32 +47,19 @@
   </style>
 </head>
 <body>
-  <h1>Image Upload Page</h1>
+  <form action="background.png" method="POST">
+    <div>
+      <label for="say">What greeting do you want to say?</label>
+      <input name="say" id="say" value="Hi" />
+    </div>
+    <div>
+      <label for="to">Who do you want to say it to?</label>
+      <input name="to" id="to" value="Mom" />
+    </div>
+    <div>
+      <button>Send my greetings</button>
+    </div>
+  </form>
   
-  <div id="upload-container">
-    <input type="file" id="upload-btn" accept="image/*">
-    <label for="upload-btn" id="upload-label">
-      <p>Click or drag and drop an image here</p>
-    </label>
-    <img id="preview-image" alt="Preview">
-  </div>
-  
-  <script>
-    const uploadBtn = document.getElementById('upload-btn');
-    const previewImage = document.getElementById('preview-image');
-
-    uploadBtn.addEventListener('change', function(event) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-
-      reader.onload = function() {
-        previewImage.src = reader.result;
-      };
-
-      if (file) {
-        reader.readAsDataURL(file);
-      }
-    });
-  </script>
 </body>
 </html>

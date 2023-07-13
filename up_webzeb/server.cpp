@@ -118,7 +118,7 @@ void	server::parseRequest(char* buffer) {
 	if (httpVersion != "HTTP/1.1")
 		throw std::runtime_error("Invalid http version.");
 	if (method == "GET")
-		GET(url);
+		GET(url, headers);
 	else if (method == "POST")
 		POST(url, body, headers);
 	else if (method == "DELETE")
@@ -135,19 +135,22 @@ std::string	server::getContent(std::string filename) {
 		ss << file.rdbuf();
 		if (file.fail() || ss.str().empty()) {
 			file.close();
-			throw std::runtime_error(strerror(errno));
+			return getContent("../webzeb/errors/404.html");
+			// throw std::runtime_error(strerror(errno));
 		}
 		file.close();
 		return ss.str();
 	}
 	else
-		throw std::runtime_error(strerror(errno));
+		return getContent("../webzeb/errors/404.html");
 }
 
 void	server::generateResponse(std::string s, std::string type) {
 	std::stringstream	response;
-	response << "HTTP/1.1 200 OK\nContent-Type: ";
-	response << ("text/" + type + "\nContent-Length: ");
+	// response << "HTTP/1.1 200 OK\nContent-Type: ";
+	// response << ("text/" + type + "\nContent-Length: ");
+	response << "HTTP/1.1" << status_phrase << "\nContent-Type: ";
+	response << type + "\nContent-Length: ";
 	response << s.length();
 	response << "\n\n";
 	response << s;
@@ -158,9 +161,10 @@ void	server::generateResponse(std::string s, std::string type) {
 
 /*----------------------------------------------- methods ------------------------------------------------------*/
 
-void	server::GET(std::string& url) {
+void	server::GET(std::string& url,std::map<std::string,std::string> headers) {
 	std::string root(test_root), path;
 	path = root + url;
+	std::cout << " |" << path << "| " << std::endl;
 	DIR*  dir = opendir(path.c_str());
 	if (dir != NULL) {
 		if (!path.empty() && path[path.length() - 1] != '/')
@@ -170,15 +174,12 @@ void	server::GET(std::string& url) {
 		while ((entry = readdir(dir)) != NULL) {
 			std::string tmp(entry->d_name);
 			if (tmp == "index.html")
-				generateResponse(getContent((path + tmp)), "html");
+				generateResponse(getContent((path + tmp)), headers["Accept"]);
 		}
 		closedir(dir);
 	}
 	else {
-		size_t i = url.find(".");
-		if (i != std::string::npos)
-			generateResponse(getContent(path), url.substr(i + 1));
-		generateResponse(getContent(path), "plain");	
+		generateResponse(getContent(path), headers["Accept"]);
 	}
 }
 

@@ -61,6 +61,7 @@ class server {
 		int					clientSocket;
 		struct sockaddr_in	address;
 		socklen_t			addrLength;
+		std::string							status_phrase("200 OK "); // temporary solution
 		/*--------------------------Initiating the connection-----------------------*/
 		void	startingConnection(int domain, int type, int protocol, int port);
 		/*--------------------------Send and receive messages-----------------------*/
