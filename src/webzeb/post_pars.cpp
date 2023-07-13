@@ -76,7 +76,7 @@ void	server::post_parse(pars& p)
     {
         if (p.header.find("Transfer-Encoding: chunked"))
         {
-            rm_hexa(p);
+            // rm_hexa(p);
             std::cout << "right" << std::endl;
         }
         outp.write(p.body_chunk.c_str(), p.body_chunk.size());
