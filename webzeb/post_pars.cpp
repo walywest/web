@@ -26,7 +26,7 @@ void    server::split_head_body(char *buffer, pars &p)
     }
 }
 
-int r_err(ssize_t d)
+int r_err(ssize_t d, pars &p)
 {
     if (d < 0)
     {
@@ -38,6 +38,7 @@ int r_err(ssize_t d)
         perror("server hanging while reading form socket");
 		throw std::runtime_error(strerror(errno));
     }
+    p.upd_valread();
     return (1);
 }
 
@@ -118,3 +119,4 @@ void	pars::upd_valread()
     }
 }
 // ****** END OF POST METHOD 
+/**************************heheheh*/
