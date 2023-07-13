@@ -42,7 +42,8 @@ class pars {
 		ssize_t max;
 		std::string header;
 		std::string body_chunk;
-		std::map<std::string, std::string> hdrs;
+		std::map<std::string, std::string> headers;
+		std::pair<std::string, std::string> key_val;
 		std::string	host;
 		pars();
 		void	upd_valread();
@@ -61,7 +62,6 @@ class server {
 		int					clientSocket;
 		struct sockaddr_in	address;
 		socklen_t			addrLength;
-		std::string							status_phrase("200 OK "); // temporary solution
 		/*--------------------------Initiating the connection-----------------------*/
 		void	startingConnection(int domain, int type, int protocol, int port);
 		/*--------------------------Send and receive messages-----------------------*/
@@ -76,13 +76,13 @@ class server {
 		void    split_head_body(char *buffer, pars &p);
 		/******/
 
-		void			parseRequest(char* buffer);
+		void			parseRequest(char* buffer, pars& p);
 		std::string		getContent(std::string filename);
 		/*-------------------------------Response generator----------------------------*/
 		void	generateResponse(std::string s, std::string type);
 		/*----------------------------------HTTP methods-------------------------------*/
-		void	GET(std::string& url); // i will just ignore the host header for the moment
-		void	POST(std::string url, std::string body, std::map<std::string,std::string> headers);
+		void	GET(std::string& url, std::map<std::string,std::string> headers); // i will just ignore the host header for the moment
+		void	POST(std::string url, std::string body, pars& p);
 		void	DELETE();
 
 	public:

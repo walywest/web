@@ -63,11 +63,11 @@ void	server::startingConnection(int domain, int type, int protocol, int port) {
 }
 
 void	server::startingServer() {
-	// pars			p; //this is the struct i addded to store parsing infos;
-	int 			r_val;
+	// pars			p; 
 	char			r_buff[1024] = {0};
 	struct pollfd	fd_poll[c_num];
 	int				nfds;
+	pars			p;//this is the struct i addded to store parsing infos;
 
 	fd_poll[0].fd = serverSocket;
 	fd_poll[0].events = POLLIN;
@@ -78,30 +78,29 @@ void	server::startingServer() {
 		if ((fd_poll[0].revents & POLLIN) && (clientSocket = accept(serverSocket, (struct sockaddr*)&address, &addrLength)) < 0)
 			throw std::runtime_error(strerror(errno));
 		// p.valread = read(clientSocket, r_buff, 1024);
-		r_val = read(clientSocket, r_buff, 1024);
-		if (r_val < 0)
+		p.valread = read(clientSocket, r_buff, 1024);
+		if (p.valread < 0)
 			throw std::runtime_error("eof reached");
-		if (!r_val)
+		if (!p.valread)
 			throw std::runtime_error("connection closed");
-		// r_err(p.valread, p);
 		std::cout << "\n------------------- New connection accepted -------------------\n";
 		std::cout << r_buff << std::endl;
-		parseRequest(r_buff);
+		parseRequest(r_buff, p);
 		std::cout << "\n---------------- connection closed ----------------\n";
 		close(clientSocket);
 	}
 }
 
-void	server::parseRequest(char* buffer) {
+void	server::parseRequest(char* buffer, pars &p) {
 	std::string	method, url, httpVersion, line, body;
-	std::map<std::string, std::string>	headers;
-	std::stringstream ss(buffer);
+	std::stringstream ss(buffer, p.valread);
 	if (ss.eof() || ss.tellg() != std::stringstream::pos_type(0))
 		throw std::runtime_error("Failed to read the request.");
 	// Request line
 	getline(ss, method, ' ');
 	getline(ss, url, ' ');
 	getline(ss, httpVersion, '\r');
+	//if (url length >= (check config)) + might need to check for allowed characters in the uri;
 	// retrieving the headers
 	while (!ss.eof() && ss.tellg() == std::stringstream::pos_type(0)) {
 		getline(ss, line, '\r'); // this "line" string is guaranteed to be ending exactly where it should '\r' but
@@ -112,15 +111,14 @@ void	server::parseRequest(char* buffer) {
 				getline(ss, body);
 				break;
 		}
-		headers[line.substr(1, line.find(":"))] = line.substr(line.find(":") + 1, line.length()); // protect find()
+		p.headers[line.substr(1, line.find(":"))] = line.substr(line.find(":") + 1, line.length()); // protect find()
 	}
-	//if (url length >= (check config))
 	if (httpVersion != "HTTP/1.1")
 		throw std::runtime_error("Invalid http version.");
 	if (method == "GET")
-		GET(url, headers);
+		GET(url, p.headers);
 	else if (method == "POST")
-		POST(url, body, headers);
+		POST(url, body, p);
 	else if (method == "DELETE")
 		DELETE();
 	else
@@ -147,14 +145,12 @@ std::string	server::getContent(std::string filename) {
 
 void	server::generateResponse(std::string s, std::string type) {
 	std::stringstream	response;
-	// response << "HTTP/1.1 200 OK\nContent-Type: ";
-	// response << ("text/" + type + "\nContent-Length: ");
+	std::string status_phrase(" 200 OK");
 	response << "HTTP/1.1" << status_phrase << "\nContent-Type: ";
 	response << type + "\nContent-Length: ";
 	response << s.length();
 	response << "\n\n";
 	response << s;
-	// std::cout << response << std::endl;
 	if (send(clientSocket, response.str().c_str(), response.str().length(), 0) < 0)
 		throw std::runtime_error(strerror(errno));
 }
@@ -183,9 +179,4 @@ void	server::GET(std::string& url,std::map<std::string,std::string> headers) {
 	}
 }
 
-void	server::POST(std::string url, std::string body, std::map<std::string,std::string> headers) {
-	(void)url;
-	(void)body;
-	(void)headers;
-}
 void	server::DELETE() {/* put ur code here*/}

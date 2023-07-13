@@ -59,44 +59,6 @@ void    rm_hexa(pars &p)
 
 // void	server::post_parse(pars& p)
 // {
-//     //add the checks here
-//     /********/ //check if the body doesn't exist
-//     //later check if the length of the body that was written is equal to the Content-Length
-
-//     /********/
-//     /********/
-//     std::ofstream   outp(UPLOADED_FILE);
-//     if (!outp)
-//     {
-//         perror("failed openning file");
-// 		throw std::runtime_error(strerror(errno));
-//     }
-//     size_t  w = 0;
-//     char    buffer[1024] = {0};
-
-//     if (p.body_chunk.size())
-//     {
-//         if (p.header.find("Transfer-Encoding: chunked"))
-//         {
-//             // rm_hexa(p);
-//             std::cout << "right" << std::endl;
-//         }
-//         outp.write(p.body_chunk.c_str(), p.body_chunk.size());
-//         outp.flush();
-//         p.body_chunk.clear();
-//     }
-//     while (w <= FILE_SIZE)
-//     {
-//         p.valread = read(clientSocket, buffer, 1024);
-//         r_err(p.valread);
-//         w += p.valread;
-//         p.upd_valread();
-//         //check if its chunked later;
-//         outp.write(buffer, p.valread);
-//         outp.flush();
-//     }
-//     //send HTTP OK 2000 here;
-//     outp.close();
 // }
 
 pars::pars()
@@ -118,5 +80,51 @@ void	pars::upd_valread()
        std::cout << max << "< " << t_valread << " in p_h = " << p_h << std::endl;
        throw std::runtime_error(strerror(errno));
     }
+}
+
+void	server::POST(std::string url, std::string body, pars &p) {
+
+    // //add the checks here
+    // /********/ //check if the body doesn't exist
+    // //later check if the length of the body that was written is equal to the Content-Length
+
+    // /********/
+    // /********/
+    // std::ofstream   outp(UPLOADED_FILE);
+    // if (!outp)
+    // {
+    //     perror("failed creating file");
+	// 	throw std::runtime_error(strerror(errno));
+    // }
+    // size_t  w = 0;
+    // char    buffer[1024] = {0};
+
+    // if (p.body_chunk.size())
+    // {
+    //     if (p.header.find("Transfer-Encoding: chunked"))
+    //     {
+    //         // rm_hexa(p);
+    //         std::cout << "right" << std::endl;
+    //     }
+    //     outp.write(p.body_chunk.c_str(), p.body_chunk.size());
+    //     outp.flush();
+    //     p.body_chunk.clear();
+    // }
+    // while (w <= FILE_SIZE)
+    // {
+    //     p.valread = read(clientSocket, buffer, 1024);
+    //     r_err(p.valread);
+    //     w += p.valread;
+    //     p.upd_valread();
+    //     //check if its chunked later;
+    //     outp.write(buffer, p.valread);
+    //     outp.flush();
+    // }
+    // //send HTTP OK 2000 here;
+    // outp.close();
+
+    (void)p;
+	(void)url;
+	(void)body;
 }
 // ****** END OF POST METHOD 
