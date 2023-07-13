@@ -1,0 +1,187 @@
+29c29
+< 	(void)obj; 
+---
+> 	(void)obj;
+44a45
+> 
+55c56,57
+< 	setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &opts, sizeof(int)); //FIX2 might fix socket still using port after the end of the programme;
+---
+> 	
+>     setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &opts, sizeof(int)); //FIX2 might fix socket still using port after the end of the programme;
+65,69c67,105
+< void	server::startingServer() {
+< 	int 			r_val;
+< 	char			r_buff[1024] = {0};
+< 	struct pollfd	fd_poll[c_num];
+< 	int				nfds;
+---
+> int	server::pre_parse(pars& p)
+> {
+> 	char	buffer[1024] = {0};
+> 	p.valread = read(clientSocket, buffer, 1024);
+> 	std::string buff(buffer, (size_t)p.valread);
+> 	if (p.valread != -1 && p.valread)
+> 	{
+> 		if (buff.find("POST") == 0)
+> 		{
+> 			p.upd_valread();
+> 			split_head_body(buffer, p);
+> 			while (!p.p_h)
+> 			{
+> 				//possible linear config checks 
+> 				p.valread = read(clientSocket, buffer, 1024);
+> 				r_err(p.valread);
+> 				p.upd_valread();
+> 				split_head_body(buffer, p);
+> 			}
+> 				//possible linear config checks 
+> 			return (1);
+> 		}
+> 		else
+> 		{
+> 			p.upd_valread();
+> 			return (2);
+> 		}
+> 	}
+> 	else if (p.valread)
+> 	{
+>         perror("error reading from socket");
+> 		throw std::runtime_error(strerror(errno));
+> 	}
+> 	else
+> 	{
+>         perror("server hanging while reading form socket");
+> 		throw std::runtime_error(strerror(errno));
+> 	}
+> }
+71,72c107,108
+< 	fd_poll[0].fd = serverSocket;
+< 	fd_poll[0].events = POLLIN;
+---
+> void	server::startingServer() {
+> 	pars p;
+75,77c111
+< 		if ((nfds = poll(fd_poll, c_num, -1)) < 0)
+< 			throw std::runtime_error(strerror(errno));
+< 		if ((fd_poll[0].revents & POLLIN) && (clientSocket = accept(serverSocket, (struct sockaddr*)&address, &addrLength)) < 0)
+---
+> 		if ((clientSocket = accept(serverSocket, (struct sockaddr*)&address, &addrLength)) < 0)
+79,83d112
+< 		r_val = read(clientSocket, r_buff, 1024);
+< 		if (r_val < 0)
+< 			throw std::runtime_error("eof reached");
+< 		if (!r_val)
+< 			throw std::runtime_error("connection closed");
+85,88c114,139
+< 		std::cout << r_buff << std::endl;
+< 		parseRequest(r_buff);
+< 		std::cout << "\n---------------- connection closed ----------------\n";
+< 		close(clientSocket);
+---
+> 		// NOTE2 since starting the server is a common task i will be making changes to this function to call ur parsing if i don't find POST in the initial buffer
+> 		//as well as Ghita also will be making simple but important changes for the multiplexing;
+> 		//pre-parsing function ===>
+> 		if (!p.type)
+> 			p.type = pre_parse(p); //this would call the right parsing for the rest of the reading
+> 		std::cout << "type of parsing >>" << p.type << std::endl;
+> 		switch (p.type)
+> 		{
+> 			case 1:
+> 				post_parse(p);
+> 				break;	
+> 			case 2:
+> 			{
+> 				// 	//**** associate with number 2;
+> 				char buffer[1024] = {0};
+> 				p.valread = read(clientSocket, buffer, 1024);
+> 				r_err(p.valread);
+> 				parseRequest(buffer);
+> 				std::cout << "\n---------------- connection closed ----------------\n";
+> 				close(clientSocket);
+> 			// 	//*****
+> 				break;	
+> 			}
+> 			default:
+> 				break;
+> 		}
+93,94c144
+< 	std::string	method, url, httpVersion, line, body;
+< 	std::map<std::string, std::string>	headers;
+---
+> 	std::string	method, url, httpVersion;
+96,102c146,148
+< 	if (ss.eof() || ss.tellg() != std::stringstream::pos_type(0))
+< 		throw std::runtime_error("Failed to read the request.");
+< 	// Request line
+< 	getline(ss, method, ' ');
+< 	getline(ss, url, ' ');
+< 	getline(ss, httpVersion, '\r');
+< 	// retrieving the headers
+---
+> 	// retrieve the following lines from the request and save them in a container
+> 	// Host for GET, Content-type for post and the Content-Length for POST and DELETE
+> 	//NOTE1 MIGHT NEED HOST HEADER FOR ALL of the 3 METHODS
+104,111c150,159
+< 		getline(ss, line, '\r');
+< 		if (line[0] != '\n')
+< 			throw std::runtime_error("Bad request.");
+< 		if (line == "\n\r\n") {
+< 				getline(ss, body);
+< 				break;
+< 		}
+< 		headers[line.substr(1, line.find(":"))] = line.substr(line.find(":") + 1, line.length()); // protect find()
+---
+> 		getline(ss, method, ' ');
+> 		getline(ss, url, ' ');
+> 		getline(ss, httpVersion, '\r');
+> 		//if (url length >= (check config))
+> 		if (httpVersion != "HTTP/1.1")
+> 			throw std::runtime_error("Invalid http version.");
+> 		if (method == "GET")
+> 			GET(url);
+> 		else
+> 			throw std::runtime_error("Invalid method.");
+113,123d160
+< 	//if (url length >= (check config))
+< 	if (httpVersion != "HTTP/1.1")
+< 		throw std::runtime_error("Invalid http version.");
+< 	if (method == "GET")
+< 		GET(url);
+< 	else if (method == "POST")
+< 		POST(url, body, headers);
+< 	else if (method == "DELETE")
+< 		DELETE();
+< 	else
+< 		throw std::runtime_error("Invalid method.");
+127,128c164,165
+< 	std::ifstream	file(filename.c_str()); // check for more option u can add for a specific opening
+< 	std::cout << " (" << filename << ") " << std::endl;
+---
+> 	std::ifstream	file(filename); // check for more option u can add for a specific opening
+> 	std::cout << filename << std::endl;
+150c187
+< 	// std::cout << response << std::endl;
+---
+> 	std::cout << response << std::endl;
+162c199
+< 		if (!path.empty() && path[path.length() - 1] != '/')
+---
+> 		if (path.back() != '/')
+164c201
+< 		// std::cout << path << std::endl;
+---
+> 		std::cout << path << std::endl;
+179,186c216
+< }
+< 
+< void	server::POST(std::string url, std::string body, std::map<std::string,std::string> headers) {
+< 	(void)url;
+< 	(void)body;
+< 	(void)headers;
+< }
+< void	server::DELETE() {/* put ur code here*/}
+\ No newline at end of file
+---
+> }
+\ No newline at end of file
