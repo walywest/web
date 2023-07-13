@@ -72,24 +72,28 @@ void	server::startingServer() {
 	fd_poll[0].fd = serverSocket;
 	fd_poll[0].events = POLLIN;
 	p.valread = 1;
-	while (p.valread && p.t_valread <= FILE_SIZE) {
+	while (1)
+	{
 		std::cout << "\n---------------- Waiting for a new connection ----------------\n";
 		if ((nfds = poll(fd_poll, c_num, -1)) < 0)
 			throw std::runtime_error(strerror(errno));
 		if ((fd_poll[0].revents & POLLIN) && (clientSocket = accept(serverSocket, (struct sockaddr*)&address, &addrLength)) < 0)
 			throw std::runtime_error(strerror(errno));
-		p.valread = read(clientSocket, r_buff, 1024);
-		std::cout << "value read is == " << p.valread << std::endl;
-		if (p.valread < 0)
-			throw std::runtime_error("eof reached");
-		if (!p.valread)
-			throw std::runtime_error("connection closed");
-		std::cout << "\n------------------- New connection accepted -------------------\n";
-		std::cout << r_buff << std::endl;
-		parseRequest(r_buff, p);
-	}
+			std::cout << "\n------------------- New connection accepted -------------------\n";
+		while (p.valread && p.t_valread <= FILE_SIZE)
+		{
+			p.valread = read(clientSocket, r_buff, 1024);
+			std::cout << "value read is == " << p.valread << std::endl;
+			if (p.valread < 0)
+				throw std::runtime_error("eof reached");
+			if (!p.valread)
+				throw std::runtime_error("connection closed");
+			std::cout << r_buff << std::endl;
+			parseRequest(r_buff, p);
+		}
 		std::cout << "\n---------------- connection closed ----------------\n";
-	close(clientSocket);
+		close(clientSocket);
+	}
 }
 
 void	server::parseRequest(char* buffer, pars &p) {

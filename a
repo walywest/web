@@ -1,84 +1,29 @@
-13a14
-> #include <string.h>
-15a17
-> #include <cstring>
-17,19c19
-< #include <iostream>
-< #include <istream>
-< #include <string>
----
-> #include <sys/poll.h>
-21c21
-< #define _port 8080
----
-> #define _port 6969
-26,31c26
-< #define M_H 8000
-< #define M_B 386108869
-< #define UPLOADED_FILE "fototita.mp4"
-< #define	FILE_SIZE	38610886
-< int		r_err(ssize_t d);
-< int string_split(std::string& m, std::string& s1, std::string& s2, std::string& lim);
----
-> #define c_num 1
-33,52d27
-< class pars {
-< 	public :
-< 		int		p_h;
-< 		int		type;
-< 		size_t	chunk_l;
-< 		std::string	hexa;
-< 		ssize_t t_valread;
-< 		ssize_t valread;
-< 		ssize_t cont_l;
-< 		ssize_t max;
-< 		std::string header;
-< 		std::string body_chunk;
-< 		std::map<std::string, std::string> hdrs;
-< 		std::string	host;
-< 		pars();
-< 		void	upd_valread();
-< };
-< 
-< void    rm_hexa(pars &p, std::string &sbuf);
-< // void    split_head_body(char *buffer, pars &p);
-56,59c31,34
-< 		int					serverSocket; // socket descriptor, an integer (like a file-handle)
-< 		int					clientSocket;
-< 		struct sockaddr_in	address;
-< 		socklen_t			addrLength;
----
-> 		int									serverSocket; // socket descriptor, an integer (like a file-handle)
-> 		int									clientSocket;
-> 		struct sockaddr_in					address;
-> 		socklen_t							addrLength;
-61c36
-< 		void	startingConnection(int domain, int type, int protocol, int port);
----
-> 		void	startingConnection(int domain, int type, int protocol, const char* interface, int port);
-65,73d39
-< 
-< 		// POST METHOD
-< 		/******/
-< 		// void    string_split(std::string& m, std::string& s1, std::string& s2, std::string& lim);
-< 		int		pre_parse(pars& p);
-< 		void	post_parse(pars& p);
-< 		void    split_head_body(char *buffer, pars &p);
-< 		/******/
-< 
-75a42
-> 		// std::string		getPath(std::string ref, std::string url); // fix the radditional requested files
-80,81c47,48
-< 		// void	POST();
-< 		// void	DELETE();
----
-> 		void	POST(std::string url, std::string body, std::map<std::string,std::string> headers);
-> 		void	DELETE();
-86c53
-< 		server(int domain, int type, int protocol, int port);
----
-> 		server(int domain, int type, int protocol, const char* interface, int port);
-95c62
-< int		ft_strlen(char* str);
----
-> int	ft_strlen(char* str);
+Starting ...
+Bindig ...
+Listening ...
+Success ! ...
+
+---------------- Waiting for a new connection ----------------
+
+------------------- New connection accepted -------------------
+value read is == 1024
+POST / HTTP/1.1
+User-Agent: PostmanRuntime/7.32.3
+Accept: */*
+Postman-Token: 61790f68-a47b-4619-b3a5-06b38aa9b865
+Host: localhost:8080
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: 38610886
+Content-Type: video/mp4
+
+
+went to POST
+value read is == 1024
+
+||
+
+
+closing the socket here -----<<<<<
+
+
