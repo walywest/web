@@ -103,7 +103,8 @@ void	server::parseRequest(char* buffer) {
 	getline(ss, httpVersion, '\r');
 	// retrieving the headers
 	while (!ss.eof() && ss.tellg() == std::stringstream::pos_type(0)) {
-		getline(ss, line, '\r');
+		getline(ss, line, '\r'); // this "line" string is guaranteed to be ending exactly where it should '\r' but
+		// is not guaranteed to be starting from exactly the start of the line
 		if (line[0] != '\n')
 			throw std::runtime_error("Bad request.");
 		if (line == "\n\r\n") {
