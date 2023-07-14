@@ -89,6 +89,7 @@ void	server::startingServer() {
 			std::cout << " but total "<< " bytes = " <<  p.t_valread  << std::endl;
 			fflush(stdout);
 			p.valread = read(clientSocket, r_buff, 1024);
+			std::cout << "has read " << p.valread << std::endl;
 			o += p.valread;
 			if (p.valread < 0)
 				throw std::runtime_error("eof reached");
@@ -114,28 +115,62 @@ void	server::parseRequest(char* buffer, pars &p) {
 		std::string line, body;
 		std::string sbuf(buffer, p.valread);
 		std::istringstream ss(sbuf);
-		std::cout << p.valread << std::endl;
 		std::cout << "this is the first inavail==> |" << ss.rdbuf()->in_avail() << "|" << std::endl;
+		std::cout << sbuf << std::endl;
+		fflush(stdout);
+			size_t i;
+
 		if (ss.eof() || ss.tellg() != std::stringstream::pos_type(0))
 			throw std::runtime_error("Failed to read the request.");
 		// Request line
-		getline(ss, p.headers["method"], ' ');
-		getline(ss, p.headers["url"], ' ');
-		getline(ss, p.headers["httpversion"], '\r');
+		if (!getline(ss, p.headers["method"], ' ') \
+		|| !getline(ss, p.headers["url"], ' ') \
+		|| !getline(ss, p.headers["httpversion"], '\n'))
+			throw std::runtime_error("hahaha");
 		//if (url length >= (check config)) + might need to check for allowed characters in the uri;
-		if (p.headers["httpversion"] != "HTTP/1.1")
+		if (p.headers["httpversion"] != "HTTP/1.1\r")
 		{
 			std::cout << "|" << p.headers["httpversion" ]<< "|"<< std::endl;
 			fflush(stdout);
-			throw std::runtime_error("Invalid http version.");
+			throw std::runtime_error("Malformed request:: Invalid http version.");
 		}
 		fflush(stdout);
 		while (ss.rdbuf()->in_avail()) {
 			std::cout << "this is in_avail " << ss.rdbuf()->in_avail() << std::endl;
-			getline(ss, line, '\n'); // this "line" string is guaranteed to be ending exactly where it should '\r' but
-			// is not guaranteed to be starting from exactly the start of the line
+			if (!getline(ss, line, '\r'))
+				throw std::runtime_error("hahaha");
 			std::cout << "line ===> |" << line << "|" << std::endl;
-			p.headers[line.substr(1, line.find(" : "))] = line.substr(line.find("\r") + 1, line.length()); // protect find()
+			line.erase(0,1);
+			i = line.find(": ");
+			if (i == std::string::npos)
+			{
+				// if (!getline(ss, line, '\r'))
+					// break;
+				std::cout << "this is line after the if |"<< line  << "|" << std::endl;
+				// if (line[0] == '\n')
+				// {
+				// 	std::cout << "*********\n\n\n\n" << std::endl;
+				// 	std::cout << "********************" << std::endl;
+				// 	std::cout << "*********\n\n\n\n" << std::endl;
+				// 	body = ss.rdbuf()->str();
+				// 	body.erase(0, 1);
+				// 		break;
+				// }
+				if (ss.rdbuf()->str()[0] == '\n')
+				{
+					body = ss.rdbuf()->str();
+					std::cout << "\n\nahahaha\n\n\n" << std::endl;
+					body.erase(0, 1);
+
+				}
+					break;
+			}
+			else
+			{
+				std::cout << "line ===> |" << line << "|" << std::endl;
+				p.headers[line.substr(0, i)] = line.substr(i + 1, std::string::npos);
+			}
+
 		}
 		if (p.headers["method"] == "GET")
 			GET(p.headers["url"], p.headers);
@@ -143,6 +178,7 @@ void	server::parseRequest(char* buffer, pars &p) {
 		{
 			std::cout << "went to POST" <<std::endl;
 			fflush(stdout);
+			std::cout << "this is the body size" << body.size() << std::endl;
 			POST(body, p);
 		}
 		else if (p.headers["method"] == "DELETE")
