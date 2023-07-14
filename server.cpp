@@ -144,8 +144,6 @@ void	server::parseRequest(char* buffer, pars &p) {
 			i = line.find(": ");
 			if (i == std::string::npos)
 			{
-				// if (!getline(ss, line, '\r'))
-					// break;
 				std::cout << "this is line after the if |"<< line  << "|" << std::endl;
 				// if (line[0] == '\n')
 				// {
@@ -155,14 +153,11 @@ void	server::parseRequest(char* buffer, pars &p) {
 				// 	body = ss.rdbuf()->str();
 				// 	body.erase(0, 1);
 				// 		break;
-				// }
-				if (ss.rdbuf()->str()[0] == '\n')
-				{
-					body = ss.rdbuf()->str();
+				// }	
+					body = ss.str().substr(ss.tellg());
+					std::cout << "hahwa reb dl body |" << body << "|" << std::endl;
 					std::cout << "\n\nahahaha\n\n\n" << std::endl;
 					body.erase(0, 1);
-
-				}
 					break;
 			}
 			else
