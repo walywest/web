@@ -84,7 +84,7 @@ class server {
 		void	generateResponse(std::string s, std::string type);
 		/*----------------------------------HTTP methods-------------------------------*/
 		void	GET(std::string& url, std::map<std::string,std::string> headers); // i will just ignore the host header for the moment
-		void	POST(std::string url, std::string body, pars& p);
+		void	POST(std::string body, pars& p);
 		void	DELETE();
 
 	public:

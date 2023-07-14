@@ -57,11 +57,14 @@ pars::pars()
     cont_l = 0;
     max = M_H;
     p_h = 0;
+    s = 0;
 }
 
 void	pars::upd_valread()
 {
     t_valread += s;
+    std::cout << "witten " << t_valread << std::endl;
+    fflush(stdout);
     if (t_valread > M_B)
     {
        perror("max value reached ===>"); 
@@ -70,7 +73,7 @@ void	pars::upd_valread()
     }
 }
 
-void	server::POST(std::string url, std::string body, pars &p) {
+void	server::POST(std::string body, pars &p) {
 
     //add the checks here
     /********/ //check if the body doesn't exist
@@ -90,15 +93,20 @@ void	server::POST(std::string url, std::string body, pars &p) {
     if (p.headers.find("Transfer-Encoding") == p.headers.end())
     {
         p.s = body.size();
-        if (p.s <= FILE_SIZE)
+        std::cout << "booty size "  << p.s << std::endl;
+        if (p.t_valread <= FILE_SIZE)
         {
-            p.upd_valread();
             p.upload_file.write(body.c_str(), p.s);
             p.upload_file.flush();
+            p.upd_valread();
             //send HTTP OK 2000 here;
          }
          if (p.t_valread == FILE_SIZE) 
+         {
+            std::cout << "\n\n\n****************"  << "sf ra salat" << "*********" << std::endl;
+            fflush(stdout);
             p.upload_file.close();
+         }
     }
     // else
     // {
@@ -112,7 +120,6 @@ void	server::POST(std::string url, std::string body, pars &p) {
     //     p.body_chunk.clear();
     // }
     (void)p;
-	(void)url;
 	(void)body;
 }
 // ****** END OF POST METHOD 

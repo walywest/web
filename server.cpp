@@ -75,67 +75,84 @@ void	server::startingServer() {
 	while (1)
 	{
 		std::cout << "\n---------------- Waiting for a new connection ----------------\n";
+			fflush(stdout);
 		if ((nfds = poll(fd_poll, c_num, -1)) < 0)
 			throw std::runtime_error(strerror(errno));
 		if ((fd_poll[0].revents & POLLIN) && (clientSocket = accept(serverSocket, (struct sockaddr*)&address, &addrLength)) < 0)
 			throw std::runtime_error(strerror(errno));
-			std::cout << "\n------------------- New connection accepted -------------------\n";
+		std::cout << "\n------------------- New connection accepted -------------------\n";
+			fflush(stdout);
+		size_t o = 0;
 		while (p.valread && p.t_valread <= FILE_SIZE)
 		{
+			std::cout << "until now read " << o << " bytes" << std::endl;
+			std::cout << " but total "<< " bytes = " <<  p.t_valread  << std::endl;
+			fflush(stdout);
 			p.valread = read(clientSocket, r_buff, 1024);
-			std::cout << "value read is == " << p.valread << std::endl;
+			o += p.valread;
 			if (p.valread < 0)
 				throw std::runtime_error("eof reached");
 			if (!p.valread)
 				throw std::runtime_error("connection closed");
-			std::cout << r_buff << std::endl;
+			std::cout << "parsing" << std::endl;
+			fflush(stdout);
+			// std::cout << r_buff << std::endl;
 			parseRequest(r_buff, p);
 		}
+		//clearing function should be here to clean p;
 		std::cout << "\n---------------- connection closed ----------------\n";
 		close(clientSocket);
+		p.headers.clear();
 	}
 }
 
 void	server::parseRequest(char* buffer, pars &p) {
-	std::string	method, url, httpVersion, line, body;
-	std::istringstream ss(buffer, p.valread);
-	// std::t << "debug string ==> |" << deb << "|" << std::endl;
-	if (ss.eof() || ss.tellg() != std::stringstream::pos_type(0))
-		throw std::runtime_error("Failed to read the request.");
-	// std::cout << "teeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest" << std::endl;
-	// Request line
-	getline(ss, method, ' ');
-	getline(ss, url, ' ');
-	getline(ss, httpVersion, '\r');
-	//if (url length >= (check config)) + might need to check for allowed characters in the uri;
-	// retrieving the headers
-	while (!ss.eof() && ss.tellg() == std::stringstream::pos_type(0)) {
-		getline(ss, line, '\r'); // this "line" string is guaranteed to be ending exactly where it should '\r' but
-		// is not guaranteed to be starting from exactly the start of the line
-		if (line[0] != '\n')
-			throw std::runtime_error("Bad request.");
-		if (line == "\n\r\n") {
-				getline(ss, body);
-				break;
-		}
-		p.headers[line.substr(1, line.find(" : "))] = line.substr(line.find(" : ") + 3, line.length()); // protect find()
-	}
-	if (httpVersion != "HTTP/1.1")
-	{
-		std::cout << "|" << httpVersion  << "|"<< std::endl;
-		throw std::runtime_error("Invalid http version.");
-	}
-	if (method == "GET")
-		GET(url, p.headers);
-	else if (method == "POST")
-	{
-		std::cout << "went to POST" <<std::endl;
-		POST(url, body, p);
-	}
-	else if (method == "DELETE")
-		DELETE();
+	if (p.headers["method"] == "POST")
+		POST(std::string(buffer, p.valread), p);
 	else
-		throw std::runtime_error("Invalid method.");
+	{
+		std::string line, body;
+		std::string sbuf(buffer, p.valread);
+		std::istringstream ss(sbuf);
+		std::cout << p.valread << std::endl;
+		std::cout << "this is the first inavail==> |" << ss.rdbuf()->in_avail() << "|" << std::endl;
+		if (ss.eof() || ss.tellg() != std::stringstream::pos_type(0))
+			throw std::runtime_error("Failed to read the request.");
+		// Request line
+		getline(ss, p.headers["method"], ' ');
+		getline(ss, p.headers["url"], ' ');
+		getline(ss, p.headers["httpversion"], '\r');
+		//if (url length >= (check config)) + might need to check for allowed characters in the uri;
+		if (p.headers["httpversion"] != "HTTP/1.1")
+		{
+			std::cout << "|" << p.headers["httpversion" ]<< "|"<< std::endl;
+			fflush(stdout);
+			throw std::runtime_error("Invalid http version.");
+		}
+		fflush(stdout);
+		while (ss.rdbuf()->in_avail()) {
+			std::cout << "this is in_avail " << ss.rdbuf()->in_avail() << std::endl;
+			getline(ss, line, '\n'); // this "line" string is guaranteed to be ending exactly where it should '\r' but
+			// is not guaranteed to be starting from exactly the start of the line
+			std::cout << "line ===> |" << line << "|" << std::endl;
+			p.headers[line.substr(1, line.find(" : "))] = line.substr(line.find("\r") + 1, line.length()); // protect find()
+		}
+		if (p.headers["method"] == "GET")
+			GET(p.headers["url"], p.headers);
+		else if (p.headers["method"] == "POST")
+		{
+			std::cout << "went to POST" <<std::endl;
+			fflush(stdout);
+			POST(body, p);
+		}
+		else if (p.headers["method"] == "DELETE")
+			DELETE();
+		else
+		{
+			std::cout << "|" << p.headers["method"] << "|" << std::endl;
+			throw std::runtime_error("Invalid method.");
+		}
+	}
 }
 
 std::string	server::getContent(std::string filename) {

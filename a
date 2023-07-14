@@ -6,24 +6,10 @@ Success ! ...
 ---------------- Waiting for a new connection ----------------
 
 ------------------- New connection accepted -------------------
-value read is == 1024
-POST / HTTP/1.1
-User-Agent: PostmanRuntime/7.32.3
-Accept: */*
-Postman-Token: 61790f68-a47b-4619-b3a5-06b38aa9b865
-Host: localhost:8080
-Accept-Encoding: gzip, deflate, br
-Connection: keep-alive
-Content-Length: 38610886
-Content-Type: video/mp4
-
-
-went to POST
-value read is == 1024
-
-||
-
-
-closing the socket here -----<<<<<
-
-
+until now read 0 bytes
+ but total  bytes = 0
+parsing
+1024
+this is the first inavail==> |1024|
+this is in_avail 1008
+line ===> ||
