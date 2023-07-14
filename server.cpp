@@ -118,7 +118,7 @@ void	server::parseRequest(char* buffer, pars &p) {
 		std::cout << "this is the first inavail==> |" << ss.rdbuf()->in_avail() << "|" << std::endl;
 		std::cout << sbuf << std::endl;
 		fflush(stdout);
-			size_t i;
+		size_t i;
 
 		if (ss.eof() || ss.tellg() != std::stringstream::pos_type(0))
 			throw std::runtime_error("Failed to read the request.");
@@ -145,20 +145,14 @@ void	server::parseRequest(char* buffer, pars &p) {
 			if (i == std::string::npos)
 			{
 				std::cout << "this is line after the if |"<< line  << "|" << std::endl;
-				// if (line[0] == '\n')
-				// {
-				// 	std::cout << "*********\n\n\n\n" << std::endl;
-				// 	std::cout << "********************" << std::endl;
-				// 	std::cout << "*********\n\n\n\n" << std::endl;
-				// 	body = ss.rdbuf()->str();
-				// 	body.erase(0, 1);
-				// 		break;
-				// }	
+				if (ss.peek() == '\n')
+				{
 					body = ss.str().substr(ss.tellg());
 					std::cout << "hahwa reb dl body |" << body << "|" << std::endl;
 					std::cout << "\n\nahahaha\n\n\n" << std::endl;
 					body.erase(0, 1);
 					break;
+				}
 			}
 			else
 			{
