@@ -115,9 +115,6 @@ void	server::parseRequest(char* buffer, pars &p) {
 		std::string line, body;
 		std::string sbuf(buffer, p.valread);
 		std::istringstream ss(sbuf);
-		std::cout << "this is the first inavail==> |" << ss.rdbuf()->in_avail() << "|" << std::endl;
-		std::cout << sbuf << std::endl;
-		fflush(stdout);
 		size_t i;
 
 		if (ss.eof() || ss.tellg() != std::stringstream::pos_type(0))
@@ -130,21 +127,20 @@ void	server::parseRequest(char* buffer, pars &p) {
 		//if (url length >= (check config)) + might need to check for allowed characters in the uri;
 		if (p.headers["httpversion"] != "HTTP/1.1\r")
 		{
-			std::cout << "|" << p.headers["httpversion" ]<< "|"<< std::endl;
 			fflush(stdout);
 			throw std::runtime_error("Malformed request:: Invalid http version.");
 		}
 		fflush(stdout);
 		while (ss.rdbuf()->in_avail() && !ss.fail()) {
-			std::cout << "this is in_avail " << ss.rdbuf()->in_avail() << std::endl;
 			if (!getline(ss, line, '\r'))
 				throw std::runtime_error("hahaha");
-			std::cout << "line ===> |" << line << "|" << std::endl;
-			line.erase(0,1);
+			// std::cout << "line ===> |" << line << "|" << std::endl;
+			if (line[0] == '\n')
+				line.erase(0,1);
 			i = line.find(": ");
 			if (i == std::string::npos)
 			{
-				std::cout << "this is line after the if |"<< line  << "|" << std::endl;
+				// std::cout << "this is line after the if |"<< line  << "|" << std::endl;
 				if (ss.peek() == '\n')
 				{
 					body = ss.str().substr(ss.tellg());
@@ -162,7 +158,11 @@ void	server::parseRequest(char* buffer, pars &p) {
 
 		}
 		if (p.headers["method"] == "GET")
+		{
+			std::cout << "Went here" << std::endl;
+			throw std::runtime_error("\n\n\n\nhehehe\n");
 			GET(p.headers["url"], p.headers);
+		}
 		else if (p.headers["method"] == "POST")
 		{
 			std::cout << "went to POST" <<std::endl;

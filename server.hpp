@@ -37,6 +37,7 @@ class pars {
 	public :
 		int		p_h;
 		int		type;
+		size_t		hex_l;
 		size_t	chunk_l;
 		std::string	hexa;
 		ssize_t t_valread;
@@ -56,7 +57,7 @@ class pars {
 int	r_err(ssize_t d, pars &p);
 
 
-void    rm_hexa(pars &p, std::string &sbuf);
+void    rm_hexa(pars &p, std::string &body);
 class server {
 	private:
 		/*-------------------------------Data  memebers----------------------------*/

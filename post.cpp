@@ -1,4 +1,3 @@
-
 #include "server.hpp"
 
 // ********************** POST METHOD 
@@ -31,23 +30,24 @@ int r_err(ssize_t d, pars &p)
     return (1);
 }
 
-// void    rm_hexa(pars &p)
-// {
-//     std::istringstream body(p.body_chunk);
-//     if (p.body_chunk.find("\r\n") != 0)
-//     {
+void    rm_hexa(pars &p, std::string &body)
+{
+    if (p.chunk_l)
+    {
+        if ((p.hex_l = body.find("\r\n")) != std::string::npos)
+        { 
+            p.hexa = body.substr(0, p.hex_l);
+            std::istringstream s(p.hexa);
+            s >> std::hex >> p.chunk_l;
+            p.chunk_l = p.body_chunk.size();
+            std::cout << "this is the hexa ===>|" << p.chunk_l << "|" << std::endl;
+        }
+        else
+            throw std::runtime_error("MALFORMED RESPONSE: HEXA NOT FOLLOWED BY '\n' '\r'");
+        throw std::runtime_error("\n\n\n\n**********SALINA*********\n\n\n\n");
+    }
+}
 
-//     }
-//     else
-//     {
-//         perror("Bad Request");
-// 		throw std::runtime_error(strerror(errno));
-//     }
-// }
-
-// void	server::post_parse(pars& p)
-// {
-// }
 
 pars::pars()
 {
@@ -58,6 +58,7 @@ pars::pars()
     max = M_H;
     p_h = 0;
     s = 0;
+    chunk_l = 0;
 }
 
 void	pars::upd_valread()
@@ -93,7 +94,6 @@ void	server::POST(std::string body, pars &p) {
     if (p.headers.find("Transfer-Encoding") == p.headers.end())
     {
         p.s = body.size();
-        std::cout << "booty size "  << p.s << std::endl;
         if (p.t_valread <= FILE_SIZE)
         {
             p.upload_file.write(body.c_str(), p.s);
@@ -107,6 +107,11 @@ void	server::POST(std::string body, pars &p) {
             fflush(stdout);
             p.upload_file.close();
          }
+    }
+    else
+    {
+        exit(0);
+        rm_hexa(p, body);
     }
     // else
     // {
