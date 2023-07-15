@@ -42,6 +42,8 @@ void    rm_hexa(pars &p, std::string &body)
             std::istringstream s(p.hexa);
             if (!(s >> std::hex >> p.chunk_n))
                 throw std::runtime_error(strerror(errno));
+            char    c = s.peek();
+            std::cout << "this the first char after hexa |" << c << "|" << std::endl;
             // p.chunk_n = p.body_chunk.size();
             body.erase(0,p.hex_l);
             p.last_h = p.valread - p.hex_l;
@@ -54,7 +56,6 @@ void    rm_hexa(pars &p, std::string &body)
     }
     else
     {
-
     }
 }
 
