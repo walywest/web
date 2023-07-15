@@ -35,17 +35,19 @@
 
 class pars {
 	public :
+		size_t		hex_l;
+		size_t		last_h;
+		size_t		to_be_skip;
+		std::string	hexa;
+		int			chunk_n;
+		std::string	body_chunk;
 		int		p_h;
 		int		type;
-		size_t		hex_l;
-		size_t	chunk_l;
-		std::string	hexa;
 		ssize_t t_valread;
 		ssize_t valread;
 		ssize_t cont_l;
 		ssize_t max;
 		size_t s;
-		std::string	body_chunk;
 		std::map<std::string, std::string> headers;
 		std::pair<std::string, std::string> key_val;
 		std::ofstream			upload_file;

@@ -32,19 +32,29 @@ int r_err(ssize_t d, pars &p)
 
 void    rm_hexa(pars &p, std::string &body)
 {
-    if (p.chunk_l)
+    if (!p.chunk_n)
     {
         if ((p.hex_l = body.find("\r\n")) != std::string::npos)
-        { 
+        {
+            p.hex_l += 2;
             p.hexa = body.substr(0, p.hex_l);
+            std::cout << "this is the hexa as a string ===>|" << p.hexa << "|" << std::endl;
             std::istringstream s(p.hexa);
-            s >> std::hex >> p.chunk_l;
-            p.chunk_l = p.body_chunk.size();
-            std::cout << "this is the hexa ===>|" << p.chunk_l << "|" << std::endl;
+            if (!(s >> std::hex >> p.chunk_n))
+                throw std::runtime_error(strerror(errno));
+            // p.chunk_n = p.body_chunk.size();
+            body.erase(0,p.hex_l);
+            p.last_h = p.valread - p.hex_l;
+            std::cout << "this is the hexa ===>|" << p.chunk_n << "|" << std::endl;
+            std::cout << "this is the body now ===>|" << body << "|" << std::endl;
         }
         else
             throw std::runtime_error("MALFORMED RESPONSE: HEXA NOT FOLLOWED BY '\n' '\r'");
         throw std::runtime_error("\n\n\n\n**********SALINA*********\n\n\n\n");
+    }
+    else
+    {
+
     }
 }
 
@@ -58,7 +68,7 @@ pars::pars()
     max = M_H;
     p_h = 0;
     s = 0;
-    chunk_l = 0;
+    chunk_n = 0;
 }
 
 void	pars::upd_valread()
@@ -91,7 +101,12 @@ void	server::POST(std::string body, pars &p) {
             throw std::runtime_error(strerror(errno));
         }
     }
-    if (p.headers.find("Transfer-Encoding") == p.headers.end())
+    if (!(p.headers.find("Transfer-Encoding") == p.headers.end()))
+    {
+        rm_hexa(p, body);
+        throw std::runtime_error("WENT TO CHUNKED");
+    }
+    else
     {
         p.s = body.size();
         if (p.t_valread <= FILE_SIZE)
@@ -107,11 +122,6 @@ void	server::POST(std::string body, pars &p) {
             fflush(stdout);
             p.upload_file.close();
          }
-    }
-    else
-    {
-        exit(0);
-        rm_hexa(p, body);
     }
     // else
     // {
