@@ -135,7 +135,7 @@ void	server::parseRequest(char* buffer, pars &p) {
 			throw std::runtime_error("Malformed request:: Invalid http version.");
 		}
 		fflush(stdout);
-		while (ss.rdbuf()->in_avail()) {
+		while (ss.rdbuf()->in_avail() && !ss.fail()) {
 			std::cout << "this is in_avail " << ss.rdbuf()->in_avail() << std::endl;
 			if (!getline(ss, line, '\r'))
 				throw std::runtime_error("hahaha");
@@ -181,7 +181,7 @@ void	server::parseRequest(char* buffer, pars &p) {
 }
 
 std::string	server::getContent(std::string filename) {
-	std::ifstream	file(filename.c_str()); // check for more option u can add for a specific opening
+	std::ifstream	file(filename); // check for more option u can add for a specific opening
 	std::cout << " (" << filename << ") " << std::endl;
 	if (file.is_open()) {
 		std::stringstream 	ss;

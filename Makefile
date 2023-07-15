@@ -4,7 +4,7 @@ CC			=	c++
 
 CPPFLAGS	=	-Wall -Wextra -Werror -std=c++98
 
- CPPFLAGS	+=	-fsanitize=address -g
+CPPFLAGS	+=	-fsanitize=address -g
 
 SRC			=	main.cpp server.cpp post.cpp
 
