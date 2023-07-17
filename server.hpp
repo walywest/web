@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <algorithm>
 #include <unistd.h>
 #include <stdio.h>
 #include <iostream>
@@ -12,8 +13,10 @@
 #include <string>
 #include <dirent.h>
 #include <sstream>
+#include <cstring>
 #include <fstream>
 #include <map>
+#include <unistd.h>
 #include <iostream>
 #include <istream>
 #include <ostream>
@@ -30,18 +33,18 @@
 #define M_H 8000
 #define M_B 386108869
 #define UPLOADED_FILE "fototita.mp4"
-#define	FILE_SIZE	38610886
+#define	FILE_SIZE 50488874
 
 
 class pars {
 	public :
+		int	end_flag;
+		ssize_t		written;
+		ssize_t		to_write;
 		size_t		hex_l;
-		size_t		last_h;
 		size_t		to_be_skip;
-		std::string	hexa;
-		int			chunk_n;
-		std::string	body_chunk;
-		int		p_h;
+		std::string	hexa; //the hexa value as a string
+		ssize_t		chunk_n;
 		int		type;
 		ssize_t t_valread;
 		ssize_t valread;
@@ -49,7 +52,6 @@ class pars {
 		ssize_t max;
 		size_t s;
 		std::map<std::string, std::string> headers;
-		std::pair<std::string, std::string> key_val;
 		std::ofstream			upload_file;
 		std::string	host;
 		pars();
@@ -59,7 +61,8 @@ class pars {
 int	r_err(ssize_t d, pars &p);
 
 
-void    rm_hexa(pars &p, std::string &body);
+int		rm_hexa(pars &p, std::string &body);
+void    write_content(pars &p, size_t len, char *body);
 class server {
 	private:
 		/*-------------------------------Data  memebers----------------------------*/

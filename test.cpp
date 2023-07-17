@@ -1,21 +1,11 @@
 #include "server.hpp"
 
 int main() {
-    DIR*  dir = opendir("../webzeb/src/");
-	std::cout <<"hh\n"; 
-	if (dir != NULL) {
-		struct dirent* entry;
-		while ((entry = readdir(dir)) != NULL)  {
-			if (entry->d_type == DT_REG) {
-				std::cout << entry->d_name << std::endl;
-			}
-			std::cout <<"here\n";
-		}
-		if (entry == 0)
-			
-		closedir(dir);
-	}
-	else
-		std::cout << "l7wa2\n";
-    return 0;
+	int	chunk;
+                std::istringstream s("1a");
+	std::cout << s.rdbuf()->in_avail() << std::endl;
+                if ((s >> std::hex >> chunk))
+					std::cout << "this is chunk " << chunk << std::endl;
+	std::cout << s.rdbuf()->in_avail() << std::endl;
+	std::cout << "and this is it"<< s.str() << std::endl;
 }

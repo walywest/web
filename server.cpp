@@ -51,14 +51,14 @@ void	server::startingConnection(int domain, int type, int protocol, int port) {
 	addrLength = sizeof(address);
 	serverSocket = socket(domain, type, protocol);
 	if (serverSocket < 0)
-		throw std::runtime_error(strerror(errno));
+		throw std::runtime_error("tooooz");
 	setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &opts, sizeof(int)); //FIX2 might fix socket still using port after the end of the programme;
 	std::cout << "Bindig ..." << std::endl;
 	if (bind(serverSocket, (struct sockaddr*)&address, addrLength) < 0)
-		throw std::runtime_error(strerror(errno));
+		throw std::runtime_error("tooooz");
 	std::cout << "Listening ..." << std::endl;
 	if (listen(serverSocket, backlog) < 0)
-		throw std::runtime_error(strerror(errno));
+		throw std::runtime_error("tooooz");
 	std::cout << "Success ! ..." << std::endl;
 }
 
@@ -77,13 +77,13 @@ void	server::startingServer() {
 		std::cout << "\n---------------- Waiting for a new connection ----------------\n";
 			fflush(stdout);
 		if ((nfds = poll(fd_poll, c_num, -1)) < 0)
-			throw std::runtime_error(strerror(errno));
+			throw std::runtime_error("tooooz");
 		if ((fd_poll[0].revents & POLLIN) && (clientSocket = accept(serverSocket, (struct sockaddr*)&address, &addrLength)) < 0)
-			throw std::runtime_error(strerror(errno));
+			throw std::runtime_error("tooooz");
 		std::cout << "\n------------------- New connection accepted -------------------\n";
 			fflush(stdout);
 		size_t o = 0;
-		while (p.valread && p.t_valread <= FILE_SIZE)
+		while ((p.valread && p.t_valread <= FILE_SIZE) || (p.end_flag != -1 && p.end_flag))
 		{
 			std::cout << "until now read " << o << " bytes" << std::endl;
 			std::cout << " but total "<< " bytes = " <<  p.t_valread  << std::endl;
@@ -181,7 +181,7 @@ void	server::parseRequest(char* buffer, pars &p) {
 }
 
 std::string	server::getContent(std::string filename) {
-	std::ifstream	file(filename); // check for more option u can add for a specific opening
+	std::ifstream	file(filename.c_str()); // check for more option u can add for a specific opening
 	std::cout << " (" << filename << ") " << std::endl;
 	if (file.is_open()) {
 		std::stringstream 	ss;
@@ -189,7 +189,7 @@ std::string	server::getContent(std::string filename) {
 		if (file.fail() || ss.str().empty()) {
 			file.close();
 			return getContent("../webzeb/errors/404.html");
-			// throw std::runtime_error(strerror(errno));
+			// throw std::runtime_error("tooooz");
 		}
 		file.close();
 		return ss.str();
@@ -207,7 +207,7 @@ void	server::generateResponse(std::string s, std::string type) {
 	response << "\n\n";
 	response << s;
 	if (send(clientSocket, response.str().c_str(), response.str().length(), 0) < 0)
-		throw std::runtime_error(strerror(errno));
+		throw std::runtime_error("tooooz");
 }
 
 /*----------------------------------------------- methods ------------------------------------------------------*/
