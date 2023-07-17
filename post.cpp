@@ -120,7 +120,7 @@ int rm_hexa(pars &p, std::string &body)
     size_t  stream_size = body.size();
 
     p.written = 0;
-    if (p.chunk_n != -1)
+    if (p.chunk_n != std::string::npos)
     {
         std::string tmp(b, stream_size);
         if (!check_hexa(p, tmp))
@@ -160,6 +160,7 @@ int rm_hexa(pars &p, std::string &body)
                     p.written += p.to_write;
                 }
             }
+        return (1);
 }
 
 

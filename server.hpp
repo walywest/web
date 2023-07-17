@@ -33,18 +33,18 @@
 #define M_H 8000
 #define M_B 386108869
 #define UPLOADED_FILE "fototita.mp4"
-#define	FILE_SIZE 50488874
+#define	FILE_SIZE 38610886
 
 
 class pars {
 	public :
 		int	end_flag;
-		ssize_t		written;
-		ssize_t		to_write;
+		size_t		written;
+		size_t		to_write;
 		size_t		hex_l;
 		size_t		to_be_skip;
 		std::string	hexa; //the hexa value as a string
-		ssize_t		chunk_n;
+		size_t		chunk_n;
 		int		type;
 		ssize_t t_valread;
 		ssize_t valread;
