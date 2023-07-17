@@ -94,7 +94,7 @@ int check_hexa (pars &p, std::string &body)
                 }
                 else
                 {
-                    p.hexa = body.substr(0,rn + 2);
+                    p.hexa = body.substr(0,rn);
                     p.hex_l = rn + 4;
                     str_to_hexa(p);
                     if (!p.chunk_n)
