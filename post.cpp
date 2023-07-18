@@ -138,7 +138,7 @@ int check_hexa (pars &p, std::string &body)
         else if (!p.to_be_skip)
         {
             std::cout << "CASE 3" << std::endl;
-            if (body.size() >= 2 && p.chunk_n != std::string::npos)
+            if (body.size() >= 2)
             {
                 std::cout << "BAD REQUEST !!" << std::endl;
                 throw std::runtime_error("MALFORMED RESPONSE: ");
@@ -179,6 +179,7 @@ int rm_hexa(pars &p, std::string &body)
 
     if (p.to_be_skip)
     {
+        p.written = 0;
         std::cout << "went here for the in the first time " << p.chunk_n << std::endl;
                     std::cout << "writting a part " << std::endl;
                     std::string tmp2(b, stream_size);
@@ -218,6 +219,7 @@ int rm_hexa(pars &p, std::string &body)
                     p.written = 0;
                 if (!stream_size)
                 {
+                    p.hexa.clear();
                     p.to_be_skip = 1;
                     std::cout << "broke here" << std::endl;
                     break;

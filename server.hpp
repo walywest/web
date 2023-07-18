@@ -33,7 +33,7 @@
 #define M_H 8000
 #define M_B 1837816389
 #define UPLOADED_FILE "fototita.mp4"
-#define	FILE_SIZE 38610886
+#define	FILE_SIZE 183781638
 
 
 class pars {
