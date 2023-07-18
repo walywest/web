@@ -158,7 +158,7 @@ int check_hexa (pars &p, std::string &body)
                     std::cout << "BAD REQUEST !!" << std::endl;
                     throw std::runtime_error("MALFORMED RESPONSE: ");
                 }
-                std::string tm = p.hexa + body.substr(0, rn);
+                std::string tm = p.hexa + body.substr(0, rn + 1);
                 if (!check_hexa(p, tm))
                     return (0);
                 if (p.to_be_skip)
