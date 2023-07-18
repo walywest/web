@@ -52,8 +52,9 @@ void    str_to_hexa(pars& p)
 {
     std::istringstream s(p.hexa);
     std::cout << "parsing this string |" << p.hexa << "|" << std::endl;
-    if (!(s >> std::hex >> p.chunk_n))
-        throw std::runtime_error("MALFORMED RESPONSE str_to_hexa"); 
+    // if (!(s >> std::hex >> p.chunk_n))
+    //     throw std::runtime_error("MALFORMED RESPONSE str_to_hexa"); 
+    s >> std::hex >> p.chunk_n;
     std::cout << "resulting this chunkn " << p.chunk_n << std::endl;
 }
 
