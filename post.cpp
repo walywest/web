@@ -52,17 +52,32 @@ void    str_to_hexa(pars& p)
 {
     std::istringstream s(p.hexa);
     if (!(s >> std::hex >> p.chunk_n))
-        throw std::runtime_error("MALFORMED RESPONSE"); 
+        throw std::runtime_error("MALFORMED RESPONSE str_to_hexa"); 
 }
-
+int normal_skip(pars& p, std::string& body, size_t& rn)
+{
+                std::cout << "CASE 2.2 normal skip" << std::endl;
+                    p.hexa = body.substr(0,rn);
+                    p.hex_l = rn + 4;
+                    str_to_hexa(p);
+                    if (!p.chunk_n)
+                    {
+                        p.end_flag = 1;
+                    std::cout << "returned 0 3" << std::endl;
+                        return (0);
+                    }
+                    return (1);
+}
 int check_hexa (pars &p, std::string &body)
 {
     size_t rn;
-        if ((rn = body.find("\r\n")) != std::string::npos && body.size() >= 2)
+        if ((rn = body.find("\r\n")) != std::string::npos)
         {
             if (rn != 0) //in this case append and apply;
             {
-                if (!p.to_be_skip)
+                //append and check new hexa;
+                std::cout << "CASE 1" << std::endl;
+                if (!p.to_be_skip && p.chunk_n != std::string::npos)
                     throw std::runtime_error("MALFORMED RESPONSE");
                 std::string tmp_hex = body.substr(0, rn + 2);
                 p.hexa += tmp_hex;
@@ -71,47 +86,49 @@ int check_hexa (pars &p, std::string &body)
                 if (!p.chunk_n)
                 {
                     p.end_flag = 1;
+                    std::cout << "returned 0 " << std::endl;
                     return (0);
                 }
+                std::cout << "concatinated and the result is str= |" << p.hexa << "|" << " chunk_n=" << p.chunk_n << std::endl;
                 return (1);
             }
             else
             {
+                std::cout << "CASE 2" << std::endl;
                 body.erase(0,2);
                 if ((rn = body.find("\r\n")) == std::string::npos)
                 {
+                    //append and wait for next read (CASE 1)
+                std::cout << "CASE 2.1" << std::endl;
                     p.to_be_skip = 1;
                     p.hexa = body.substr(0, std::string::npos);
-                    p.hexa = "\r\n" + p.hexa;
-                    p.hex_l = rn + 2;
+                    p.hex_l = p.hexa.size() + 2;
+                    p.hexa = "\r\n" + p.hexa + "\r\n";
                     str_to_hexa(p);
-                    if (!p.chunk_n)
-                    {
-                        p.end_flag = 1;
-                        return (0);
-                    }
+                    p.chunk_n = std::string::npos;
                     return (1);
                 }
                 else
                 {
-                    p.hexa = body.substr(0,rn);
-                    p.hex_l = rn + 4;
-                    str_to_hexa(p);
-                    if (!p.chunk_n)
-                    {
-                        p.end_flag = 1;
-                        return (0);
-                    }
-                    return (1);
+                    //checking hexa and skipping
+                    return (normal_skip(p, body, rn));
                 }
             }
         }
-        else
+        else if (body.size() <= 2 && !p.to_be_skip)
+        {
+                std::cout << "CASE 3" << std::endl;
+            p.hex_l = body.size();
+            p.hexa.clear();
+            p.to_be_skip = 1;
+            return (1);
+        }
+        else if (rn)
         {
             std::cout << "BAD REQUEST !!" << std::endl;
+            std::cout << "HAFIN ==>" << std::endl;
             throw std::runtime_error("MALFORMED RESPONSE: HEXA NOT FOLLOWED BY '\n' '\r'");
         }
-
 }
 
 int rm_hexa(pars &p, std::string &body)
@@ -119,14 +136,23 @@ int rm_hexa(pars &p, std::string &body)
     char    *b = const_cast<char *> (body.c_str());
     size_t  stream_size = body.size();
 
-    p.written = 0;
-    if (p.chunk_n != std::string::npos)
+    if (p.chunk_n == std::string::npos)
     {
+        std::cout << "went here for the in the first time " << p.chunk_n << std::endl;
+                    std::cout << "writting a part " << std::endl;
+                    std::string tmp2(b, stream_size);
+                    std::cout << "this is the body before |" << tmp2 << "|" << std::endl;
+                    std::cout << "its streamsize is " << stream_size << std::endl;
         std::string tmp(b, stream_size);
         if (!check_hexa(p, tmp))
+        {
             return (0);
+        }
         stream_size -= p.hex_l;
         b += p.hex_l;
+                    std::string tmp1(b, stream_size);
+                    std::cout << "this is the body now|" << tmp1 << "|" << std::endl;
+                    std::cout << "its streamsize is " << stream_size << std::endl;
     }
             //********AFTER REMOVIG THE FIRST HEXA
 
@@ -135,7 +161,9 @@ int rm_hexa(pars &p, std::string &body)
             {
                 p.to_be_skip = 0;
                 p.to_write = std::min(p.chunk_n - p.written, stream_size);
+                std::cout << "streamsize=" << stream_size << std::endl;
                 std::cout << "this is to_write " << p.to_write << std::endl;
+                std::cout << "because chunk_n=" << p.chunk_n << " - p.written=" << p.written << " =" << p.chunk_n - p.written << std::endl;
                 write_content(p, p.to_write, b);
 
                 stream_size -= p.to_write;
@@ -145,17 +173,27 @@ int rm_hexa(pars &p, std::string &body)
 
                 if (p.to_write + p.written == p.chunk_n)
                 {
+                    p.written = 0;
+                if (!stream_size)
+                    break;
+                    std::cout << "writting a part " << std::endl;
+                    std::string tmp2(b, stream_size);
+                    std::cout << "this is the body before |" << tmp2 << "|" << std::endl;
+                    std::cout << "its streamsize is " << stream_size << std::endl;
                     std::string tmp(b, stream_size);
                     if (!check_hexa(p, tmp))
                         break;
-                    p.written = 0;
                     stream_size -= p.hex_l;
                     if (stream_size == std::string::npos)
                         throw std::runtime_error("tooooz");
                     b += p.hex_l; //check later;
+                    std::string tmp1(b, stream_size);
+                    std::cout << "this is the body now|" << tmp1 << "|" << std::endl;
+                    std::cout << "its streamsize is " << stream_size << std::endl;
                 }
                 else
                 {
+                    std::cout << "writting all the streamsize " << std::endl;
                     p.to_be_skip = 0;
                     p.written += p.to_write;
                 }
@@ -163,8 +201,8 @@ int rm_hexa(pars &p, std::string &body)
         return (1);
 }
 
-
 pars::pars()
+
 {
     end_flag = -1;
     type = 0; 
@@ -175,12 +213,13 @@ pars::pars()
     s = 0;
     chunk_n = -1;
     to_be_skip = 0;
+    written = 0;
 }
 
 void	pars::upd_valread()
 {
     t_valread += s;
-    std::cout << "witten " << t_valread << std::endl;
+    // std::cout << "witten " << t_valread << std::endl;
     fflush(stdout);
     if (t_valread > M_B)
     {

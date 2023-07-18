@@ -83,7 +83,7 @@ void	server::startingServer() {
 		std::cout << "\n------------------- New connection accepted -------------------\n";
 			fflush(stdout);
 		size_t o = 0;
-		while ((p.valread && p.t_valread <= FILE_SIZE) || (p.end_flag != -1 && p.end_flag))
+		while ((p.valread && p.end_flag))
 		{
 			std::cout << "until now read " << o << " bytes" << std::endl;
 			std::cout << " but total "<< " bytes = " <<  p.t_valread  << std::endl;
