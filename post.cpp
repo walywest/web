@@ -217,27 +217,27 @@ int rm_hexa(pars &p, std::string &body)
                 if (p.to_write + p.written == p.chunk_n)
                 {
                     p.written = 0;
-                if (!stream_size)
-                {
-                    p.hexa.clear();
-                    p.to_be_skip = 1;
-                    std::cout << "broke here" << std::endl;
-                    break;
-                }
-                    std::cout << "writting a part " << std::endl;
-                    std::string tmp2(b, stream_size);
-                    std::cout << "this is the body before |" << tmp2 << "|" << std::endl;
-                    std::cout << "its streamsize is " << stream_size << std::endl;
-                    std::string tmp(b, stream_size);
-                    if (!check_hexa(p, tmp))
+                    if (!stream_size)
+                    {
+                        p.hexa.clear();
+                        p.to_be_skip = 1;
+                        std::cout << "broke here" << std::endl;
                         break;
-                    stream_size -= p.hex_l;
-                    if (stream_size == std::string::npos)
-                        throw std::runtime_error("tooooz");
-                    b += p.hex_l; //check later;
-                    std::string tmp1(b, stream_size);
-                    std::cout << "this is the body now|" << tmp1 << "|" << std::endl;
-                    std::cout << "its streamsize is " << stream_size << std::endl;
+                    }
+                        std::cout << "writting a part " << std::endl;
+                        std::string tmp2(b, stream_size);
+                        std::cout << "this is the body before |" << tmp2 << "|" << std::endl;
+                        std::cout << "its streamsize is " << stream_size << std::endl;
+                        std::string tmp(b, stream_size);
+                        if (!check_hexa(p, tmp))
+                            break;
+                        stream_size -= p.hex_l;
+                        if (stream_size == std::string::npos)
+                            throw std::runtime_error("tooooz");
+                        b += p.hex_l; //check later;
+                        std::string tmp1(b, stream_size);
+                        std::cout << "this is the body now|" << tmp1 << "|" << std::endl;
+                        std::cout << "its streamsize is " << stream_size << std::endl;
                 }
                 else
                 {
