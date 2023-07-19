@@ -97,6 +97,7 @@ int check_hexa (pars &p, std::string &body)
     }
     else if (p.to_be_skip == 2)
     {
+        std::cout << "CASE 2" << std::endl;
         p.hex_l = 0;
         p.to_be_skip = 0;
         if ((rn = body.find("\n")) == std::string::npos)
@@ -112,12 +113,16 @@ int check_hexa (pars &p, std::string &body)
     }
     else
     {
+        std::cout << "CASE 3" << std::endl;
         if ((rn = body.find("\r\n")) != std::string::npos)
         {
+            std::cout << "CASE 3.1" << std::endl;
             if (rn != 0)
                 throw std::runtime_error("MALFORMED RESPONSE!");
+            body.erase(0, 2);
             if ((rn = body.find("\r\n")) != std::string::npos)
             {
+                std::cout << "CASE 3.11" << std::endl;
                 p.hex_l = rn + 4;
                 p.hexa = "\r\n" + body.substr(0, rn + 2);
                 str_to_hexa(p);
@@ -131,14 +136,16 @@ int check_hexa (pars &p, std::string &body)
             }
             else
             {
-                p.hex_l = body.size();
-                p.hexa = body;
+                std::cout << "CASE 3.12" << std::endl;
+                p.hex_l = body.size() + 2;
+                p.hexa = "\r\n" + body;
                 p.to_be_skip = 1;
                 return (1);
             }
         }
         else
         {
+            std::cout << "CASE 3.2" << std::endl;
             if (body.size() >= 2)
                 throw std::runtime_error("MALFORMED RESPONSE!");
             p.hex_l = body.size();
