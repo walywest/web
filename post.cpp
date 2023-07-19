@@ -48,6 +48,7 @@ void    write_content(pars &p, size_t len, char *body)
             p.upload_file.close();
          }
 }
+
 void    str_to_hexa(pars& p)
 {
     std::istringstream s(p.hexa);
@@ -72,6 +73,7 @@ int normal_skip(pars& p, std::string& body, size_t& rn)
                     }
                     return (1);
 }
+
 int check_hexa (pars &p, std::string &body)
 {
     size_t rn;
@@ -90,6 +92,7 @@ int check_hexa (pars &p, std::string &body)
             p.end_flag = 0;
             return (0);
         }
+        p.hexa.clear();
         return (1);
     }
     else if (p.to_be_skip == 2)
@@ -123,6 +126,7 @@ int check_hexa (pars &p, std::string &body)
                     p.end_flag = 0;
                     return (0);
                 }
+                p.hexa.clear();
                 return (1);
             }
             else
@@ -148,10 +152,10 @@ int check_hexa (pars &p, std::string &body)
 int rm_hexa(pars &p, std::string &body)
 {
     char    *b = const_cast<char *> (body.c_str());
-    size_t  stream_size = p.valread;
+    size_t  stream_size = body.size();
     std::cout << "this is the initial body size " <<  stream_size << std::endl;
-    std::string k(b, stream_size);
-    std::cout << "here is the body ga3 ===> |" << k << "|" << std::endl;
+    // std::string k(b, stream_size);
+    // std::cout << "here is the body ga3 ===> |" << k << "|" << std::endl;
 
     if (p.to_be_skip)
     {
@@ -188,6 +192,7 @@ int rm_hexa(pars &p, std::string &body)
                 stream_size -= p.to_write;
                     if (stream_size == std::string::npos)
                         throw std::runtime_error("tooooz");
+                std::cout << "streamsize - to_write ==" << stream_size << std::endl;
                 b += p.to_write;
 
                 if (p.to_write + p.written == p.chunk_n)
@@ -200,10 +205,10 @@ int rm_hexa(pars &p, std::string &body)
                         // std::cout << "broke here" << std::endl;
                         break;
                     }
-                        // std::cout << "writting a part " << std::endl;
+                        std::cout << "writting a part " << std::endl;
                         std::string tmp2(b, stream_size);
-                        // std::cout << "this is the body before |" << tmp2 << "|" << std::endl;
-                        // std::cout << "its streamsize is " << stream_size << std::endl;
+                        std::cout << "this is the body before |" << tmp2 << "|" << std::endl;
+                        std::cout << "its streamsize is " << stream_size << std::endl;
                         std::string tmp(b, stream_size);
                         if (!check_hexa(p, tmp))
                             break;
@@ -212,8 +217,8 @@ int rm_hexa(pars &p, std::string &body)
                             throw std::runtime_error("tooooz");
                         b += p.hex_l; //check later;
                         std::string tmp1(b, stream_size);
-                        // std::cout << "this is the body now|" << tmp1 << "|" << std::endl;
-                        // std::cout << "its streamsize is " << stream_size << std::endl;
+                        std::cout << "this is the body now|" << tmp1 << "|" << std::endl;
+                        std::cout << "its streamsize - hex_l " << stream_size << std::endl;
                 }
                 else
                 {
@@ -238,6 +243,7 @@ pars::pars()
     chunk_n = -1;
     to_be_skip = 1;
     written = 0;
+    to_write = 0;
 }
 
 void	pars::upd_valread()

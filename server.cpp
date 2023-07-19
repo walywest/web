@@ -145,6 +145,7 @@ void	server::parseRequest(char* buffer, pars &p) {
 				{
 					body = ss.str().substr(ss.tellg());
 					std::cout << "hahwa reb dl body |" << body << "|" << std::endl;
+					std::cout << "size" << body.size() << std::endl;
 					std::cout << "\n\nahahaha\n\n\n" << std::endl;
 					body.erase(0, 1);
 					break;
