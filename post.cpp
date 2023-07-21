@@ -39,7 +39,6 @@ void    write_content(pars &p, size_t len, char *body)
             p.upload_file.write(body, p.s);
             p.upload_file.flush();
             p.upd_valread();
-            //send HTTP OK 2000 here;
          }
          if (p.t_valread == FILE_SIZE) 
          {
@@ -68,7 +67,7 @@ int normal_skip(pars& p, std::string& body, size_t& rn)
                     if (!p.chunk_n)
                     {
                         p.end_flag = 1;
-                    std::cout << "returned 0 3" << std::endl;
+                        std::cout << "returned 0 3" << std::endl;
                         return (0);
                     }
                     return (1);
@@ -307,17 +306,6 @@ void	server::POST(std::string body, pars &p) {
             p.upload_file.close();
          }
     }
-    // else
-    // {
-    //     if () //check for the chunked header
-    //     {
-    //         // rm_hexa(p);
-    //         std::cout << "right" << std::endl;
-    //     }
-    //     p.upload_file.write(p.body_chunk.c_str(), p.body_chunk.size());
-    //     p.upload_file.flush();
-    //     p.body_chunk.clear();
-    // }
     (void)p;
 	(void)body;
 }
