@@ -29,7 +29,7 @@
 #define _port 8080
 #define localhost "127.0.0.1"
 #define backlog 10
-#define test_response "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!"
+#define test_response "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 12\r\n\r\nHello world!"
 #define test_root "../webzeb"
 #define M_H 8000
 #define M_B 1837816389
@@ -53,10 +53,6 @@ class server {
 
 		// POST METHOD
 		/******/
-		// void    string_split(std::string& m, std::string& s1, std::string& s2, std::string& lim);
-		int		pre_parse(pars& p);
-		void	post_parse(pars& p);
-		void    split_head_body(char *buffer, pars &p);
 		/******/
 
 		void			parseRequest(char* buffer, pars& p);

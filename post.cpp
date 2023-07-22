@@ -235,10 +235,9 @@ int rm_hexa(pars &p, std::string &body)
 }
 
 pars::pars()
-
 {
+    rflag = 0;
     end_flag = -1;
-    type = 0; 
     t_valread = 0;
     valread = 0;
     cont_l = 0;
@@ -280,13 +279,10 @@ void	server::POST(std::string body, pars &p) {
             throw std::runtime_error("tooooz");
         }
     }
+
     if (p.headers.find("Transfer-Encoding") != p.headers.end() && p.headers["Transfer-Encoding"] == "chunked")
-    {
-        // std::cout << "parsing the buffer number "
-        // std::cout << "WENT TO CHUNKED" << std::endl;
         rm_hexa(p, body);
-        // throw std::runtime_error("WENT TO CHUNKED");
-    }
+
     else
     {
         p.s = body.size();

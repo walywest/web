@@ -3,14 +3,14 @@
 
 class pars {
 	public :
+		int	rflag;
 		int	end_flag;
 		size_t		written;
 		size_t		to_write;
 		size_t		hex_l;
 		size_t		to_be_skip;
-		std::string	hexa; //the hexa value as a string
+		std::string	hexa;
 		size_t		chunk_n;
-		int		type;
 		ssize_t t_valread;
 		ssize_t valread;
 		ssize_t cont_l;
