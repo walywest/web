@@ -85,17 +85,17 @@ void	server::startingServer() {
 		size_t o = 0;
 		while ((p.valread && p.end_flag))
 		{
-			std::cout << "until now read " << o << " bytes" << std::endl;
-			std::cout << " but total "<< " bytes = " <<  p.t_valread  << std::endl;
+			// std::cout << "until now read " << o << " bytes" << std::endl;
+			// std::cout << " but total "<< " bytes = " <<  p.t_valread  << std::endl;
 			fflush(stdout);
 			p.valread = read(clientSocket, r_buff, 1024);
-			std::cout << "has read " << p.valread << std::endl;
+			// std::cout << "has read " << p.valread << std::endl;
 			o += p.valread;
 			if (p.valread < 0)
 				throw std::runtime_error("eof reached");
 			if (!p.valread)
 				throw std::runtime_error("connection closed");
-			std::cout << "parsing" << std::endl;
+			// std::cout << "parsing" << std::endl;
 			fflush(stdout);
 			// std::cout << r_buff << std::endl;
 			parseRequest(r_buff, p);
@@ -144,23 +144,23 @@ void	server::parseRequest(char* buffer, pars &p) {
 				if (ss.peek() == '\n')
 				{
 					body = ss.str().substr(ss.tellg());
-					std::cout << "hahwa reb dl body |" << body << "|" << std::endl;
-					std::cout << "size" << body.size() << std::endl;
-					std::cout << "\n\nahahaha\n\n\n" << std::endl;
+					// std::cout << "hahwa reb dl body |" << body << "|" << std::endl;
+					// std::cout << "size" << body.size() << std::endl;
+					// std::cout << "\n\nahahaha\n\n\n" << std::endl;
 					body.erase(0, 1);
 					break;
 				}
 			}
 			else
 			{
-				std::cout << "line ===> |" << line << "|" << std::endl;
-				p.headers[line.substr(0, i)] = line.substr(i + 1, std::string::npos);
+				// std::cout << "line ===> |" << line << "|" << std::endl;
+				p.headers[line.substr(0, i)] = line.substr(i + 2, std::string::npos);
 			}
 
 		}
 		if (p.headers["method"] == "GET")
 		{
-			std::cout << "Went here" << std::endl;
+			// std::cout << "Went here" << std::endl;
 			throw std::runtime_error("\n\n\n\nhehehe\n");
 			GET(p.headers["url"], p.headers);
 		}
@@ -168,7 +168,7 @@ void	server::parseRequest(char* buffer, pars &p) {
 		{
 			std::cout << "went to POST" <<std::endl;
 			fflush(stdout);
-			std::cout << "this is the body size" << body.size() << std::endl;
+			// std::cout << "this is the body size" << body.size() << std::endl;
 			POST(body, p);
 		}
 		else if (p.headers["method"] == "DELETE")
