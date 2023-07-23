@@ -1,0 +1,220 @@
+https://medium.com/from-the-scratch/http-server-what-do-you-need-to-know-to-build-a-simple-http-server-from-scratch-d1ef8945e4fa
+https://velog.io/@sweetykr/42Seoul-Webserv
+https://medium.com/@mjbaldwin/linux-webserver-cheatsheet-7440b1264f8
+https://forhjy.medium.com/42-webserv-cgi-programming-66d63c3b22db
+https://github.com/Dungyichao/http_server
+https://www.google.com/search?q=webserve+cpp&oq=webserve+cpp&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTILCAEQABgNGBMYgAQyDAgCEAAYChgTGBYYHjIOCAMQABgIGAoYDRgTGB4yDggEEAAYChgPGBMYFhgeMgYIBRBFGDzSAQg2NjUzajBqN6gCALACAA&sourceid=chrome&ie=UTF-8#fpstate=ive&vld=cid:ebe2fb0a,vid:VlUO6ERf1TQ
+https://www.tutorialspoint.com/cplusplus/cpp_web_programming.htm
+https://www.tutorialspoint.com/cplusplus/cpp_web_programming.htm
+https://osasazamegbe.medium.com/showing-building-an-http-server-from-scratch-in-c-2da7c0db6cb7
+https://beej.us/guide/bgnet/
+https://www.freecodecamp.org/news/the-nginx-handbook/
+https://www.youtube.com/playlist?list=PL9IEJIKnBJjH_zM5LnovnoaKlXML5qh17
+https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+https://learn.microsoft.com/en-us/previous-versions/exchange-server/exchange-10/ms526508(v=exchg.10)?redirectedfrom=MSDN
+https://learn.microsoft.com/en-us/previous-versions/exchange-server/exchange-10/ms527550(v=exchg.10)?redirectedfrom=MSDN
+https://www.digitalocean.com/community/tutorials/understanding-nginx-server-and-location-block-selection-algorithms#how-nginx-decides-which-server-block-will-handle-a-request
+http://nginx.org/en/docs/dirindex.html
+https://beej.us/guide/bgnet/
+https://www.sugarsync.com/dev/api/method/delete-folder.html
+https://www.ibm.com/docs/en/netcoolomnibus/8.1?topic=scripts-environment-variables-in-cgi-script
+------------------------------------------------------------------------------------------------------------------------------------------------
+Read the Configuration File:
+Parse the configuration file to retrieve the server settings such as port, host, server names, default error pages, etc.
+
+Set Up the Server:
+Create a socket using the socket() function.
+Bind the socket to the specified host and port using bind().
+Set the socket to listen for incoming connections using listen().
+
+Accept Incoming Connections:
+Use select(), poll(), or an equivalent function to monitor the listening socket for incoming connections.
+Accept incoming connections using accept() when a new connection is detected.
+Add the accepted connection to the list of connections to monitor.
+
+Handle Client Requests:
+Read the incoming data from the client connection using read() or recv().
+Parse the received data according to the HTTP protocol to extract the request method, headers, and body.
+Extract the requested URI and any query parameters from the request.
+Based on the configuration and routing rules, determine how to handle the request.
+
+Serve Static Files:
+If the request is for a static file, determine the corresponding file path on the server.
+Check if the file exists and is accessible.
+Read the file contents into memory.
+Generate appropriate response headers, including content type and content length.
+Write the response headers and file contents to the client connection using write() or send().
+
+Handle CGI Execution:
+If the request requires CGI execution, extract the requested URI and the corresponding CGI script path.
+Execute the CGI script, passing the requested file as an argument.
+Capture the output of the CGI script and send it as the response body.
+Set appropriate response headers, including content type and content length.
+Handle chunked requests and responses if necessary.
+
+Handle Error Cases:
+Implement default error pages for different HTTP status codes.
+Handle errors gracefully and send appropriate error responses when necessary.
+
+Monitor Connections:
+Continuously monitor all active connections using select(), poll(), or an equivalent function.
+Handle read and write events for each connection.
+Read data from the client connection, parse requests, and generate appropriate responses.
+Write response data to the client connection.
+
+Test and Validate:
+Use tools like telnet, web browsers, or automated testing frameworks to validate the server's behavior.
+Compare the server's behavior with NGINX or other HTTP servers to ensure compatibility.
+Write unit tests and integration tests to verify the functionality of each component.
+
+Optimize and Refactor:
+Identify bottlenecks or performance issues in the server's implementation.
+Optimize critical sections or algorithms to improve performance.
+Refactor code to improve readability, modularity, and maintainability.
+------------------------------------------------------------------------------------------------------------------------------------------------
+struct sockaddr_in {
+    short sin_family;          // Address family (e.g., AF_INET)
+    u_short sin_port;          // Port number in network byte order
+    struct in_addr sin_addr;   // IP address in network byte order
+    char sin_zero[8];          // Padding to ensure structure size consistency
+};
+sin_family: Specifies the address family, typically set to AF_INET for IPv4 addresses.
+sin_port: Represents the port number associated with the address. It should be specified using the htons() function to ensure correct byte order in network representation.
+sin_addr: Holds the IP address itself, represented by the struct in_addr data structure. The IP address should be set using functions like inet_addr() or inet_pton().
+sin_zero: Padding field to ensure the structure size consistency. It is typically set to all zeros.
+When using the struct sockaddr_in, you need to populate its members appropriately before using it with socket-related functions. For example, when binding a socket to a specific IP address and port, you would set the sin_family, sin_port, and sin_addr fields accordingly.
+Note that the inet_addr() function is used to convert the IP address from the string format to the appropriate network byte order representation.
+The struct sockaddr_in is commonly used in socket programming for representing IPv4 addresses in network-related operations, such as binding a socket, connecting to a remote server, or accepting incoming connections.
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+Nginx will first try to find a server block with a server_name that matches the value in the Host header 
+of the request exactly. If this is found, the associated block will be used to serve the request. 
+If multiple exact matches are found, the first one is used.
+If no exact match is found, Nginx will then try to find a server block with 
+a server_name that matches using a leading wildcard (indicated by a * at the beginning 
+of the name in the config). If one is found, that block will be used to serve the request. 
+If multiple matches are found, the longest match will be used to serve the request.
+If no match is found using a leading wildcard, Nginx then looks for a server block with 
+a server_name that matches using a trailing wildcard (indicated by a server name ending with a * in the config). 
+If one is found, that block is used to serve the request. If multiple matches are found, the longest match 
+will be used to serve the request.
+If no match is found using a trailing wildcard, Nginx then evaluates server blocks 
+that define the server_name using regular expressions (indicated by a ~ before the name). 
+The first server_name with a regular expression that matches the “Host” header will be used to serve the request.
+If no regular expression match is found, Nginx then selects the default server block for that IP address and port.
+Each IP address/port combo has a default server block that will be used when a course of action 
+can not be determined with the above methods. For an IP address/port combo, 
+this will either be the first block in the configuration or the block that
+contains the default_server option as part of the listen directive 
+(which would override the first-found algorithm).
+There can be only one default_server declaration per each IP address/port combination
+>-----------------------CGI-------------------<
+1-create env fill a vector with the parsed request + the aditional envirment variables listed below : 
+content-length
+content-type
+request-method
+query-string
+http-cookie
+path-info
+REDIRECT_STATUS
+script_filename
+2-create a file to put the body 
+3-Make process by using fork( ) and Execute CGI in child process
+[
+    fd = open(//temporary file to record cgi result);
+pipe(tubes);
+if ((cgi_pid = fork())== 0) // child process
+{
+  close(tubes[1]);
+  dup2(tubes[0], 0);
+  execve(args[0], args, env);
+}
+args[0] has to be a path of cgi program or cgi script. Such as “/usr/local/bin/php-cgi”
+args[1] has to be a path of cgi file . If it script it has to be NULL.
+args[2] == NULL
+env has parsed request and some more variables 
+]
+4-Pass requested data through pipe in Parent Process
+// void	httpServer::startingServer() {
+// 	int 				r_val;
+// 	char				r_buff[1024] = {0};
+// 	size_t					c_num = data.size();
+// 	std::vector<std::stringstream>	request(c_num + 1);
+// 	struct pollfd		fd_poll[c_num];
+// 	int					nfds;
+
+// 	// if each server has one client to handle the fd_poll will only have one fd to handle and since we are not handling virtual hosying this will be the case
+// 	// otherwise c_num will be set to the number of client within a server
+// 	while (1) {
+// 		for (size_t i = 0; i < c_num; ++i) {
+// 			fd_poll[i].fd = serverSocket[i];
+// 			fd_poll[i].events = POLLIN;
+// 		}
+// 		if ((nfds = poll(fd_poll, c_num, -1)) < 0)
+// 			throw std::runtime_error(strerror(errno));
+// 		if (!nfds)
+// 			throw std::runtime_error("Time out."); // no event occured
+// 		for (size_t i = 0; i < c_num; ++i) {
+// 			std::cout << "\n---------------- Waiting for a new connection (iteration :(" << i << ")----------------\n";
+// 			clientSocket.push_back(accept(serverSocket[i], (struct sockaddr*)&address, &addrLength));
+// 			if ((fd_poll[i].revents & POLLIN) && (clientSocket.back() < 0))
+// 				throw std::runtime_error(strerror(errno));
+// 			r_val = read(clientSocket[i], r_buff, 1024);
+// 			if (r_val < 0)
+// 				throw std::runtime_error("eof reached");
+// 			if (!r_val)
+// 				throw std::runtime_error("connection closed");
+// 			std::cout << "\n------------------- New connection accepted -------------------\n";
+// 			std::cout << r_buff << std::endl;
+// 			request[i] << r_buff;
+// 			std::cout << "\n---------------- connection closed ----------------\n";
+// 		}
+// 		parseRequest(request);
+// 	}
+
+// }
+
+// void	httpServer::parseRequest(std::vector<std::stringstream>& request) {
+// 	// added query string that will be later sent to the cgi
+// 	std::string	method, url, httpVersion, line, body, query;
+// 	// size_t	c_num = data.size();
+// 	size_t	j;
+// 	std::map<std::string, std::string>	headers;
+// 	for (size_t i = 0; i < request.size(); ++i) {
+// 		std::cout << "request :\n" ;
+// 		std::cout << "--------" << request[i].str() << "-------" << std::endl;
+// 		if (request[i].eof() || request[i].tellg() != std::stringstream::pos_type(0))
+// 			throw std::runtime_error("Failed to read the request.");
+// 		// Request line
+// 		getline(request[i], method, ' ');getline(request[i], url, ' ');getline(request[i], httpVersion, '\r');
+// 		if ((j = line.find("?")) != std::string::npos) {
+// 			query = url.substr(j + 1, url.length());
+// 			url = url.substr(0, j);
+// 		}
+// 		// retrieving the headers
+// 		while (!request[i].eof()) {
+// 			getline(request[i], line, '\r');
+// 			if (line[0] != '\n')
+// 				throw std::runtime_error("Bad request.");
+// 			if (line == "\n\r\n") {
+// 					getline(request[i], body);
+// 					break;
+// 			}
+// 			if ((j = line.find(":")) == std::string::npos)
+// 				continue ; // check later
+// 				// throw std::runtime_error("Invalid request."); // redirect to an error page instead
+// 			headers[line.substr(1, j)] = line.substr(j + 1, line.length()); // protect find()
+// 		}
+// 		// std::cout << "(" + body + ")" << std::endl;
+// 		is_valid(headers ,method, url, httpVersion); // to check
+// 		std::vector<Location> locations = data[i].GetLocation();
+// 		if (method == "GET")
+// 			GET(url, headers, getMatchingLocation(url, method, data[i].GetLocation()), data[i]);
+// 		else if (method == "POST")
+// 			POST(url, body, headers);
+// 		else if (method == "DELETE")
+// 			DELETE(url, headers, getMatchingLocation(url, method, data[i].GetLocation()), data[i]);
+// 		request[i].str("");
+// 		request[i].clear();
+// 	}
+// }

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>landing page</title>
+    <style>
+      
+@keyframes flicker {
+
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+  
+      text-shadow:
+      0 0 4px #fff,
+      0 0 11px #fff,
+      0 0 19px #fff,
+      0 0 40px rgb(255, 0, 242),
+      0 0 80px rgb(255, 0, 123),
+      0 0 90px rgb(255, 0, 136),
+      0 0 100px rgb(102, 0, 255),
+      0 0 150px rgb(81, 0, 255);
+  
+  }
+
+  20%, 24%, 55% {        
+      text-shadow: none;
+  }    
+}
+
+/*-----Additional styling-----*/
+h2 {
+ font-size: 1.8rem;
+}
+
+.container {
+  margin-top: 20vh;
+}
+
+body {
+  font-size: 18px;
+  font-family: "Helvetica Neue", sans-serif;
+  background-image: url("background.png");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  background-color: #0f0e0e;
+  background-position: center;
+  position: relative;
+} 
+
+h1, h2 {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 400;
+}
+
+.neonText {
+    animation: flicker 1.5s infinite alternate;
+    color: #fff;
+  }
+  
+  h1 {
+    font-size: 4.2rem;    
+  }
+
+/*-----Button styling-----*/
+
+.my-btn {
+  background-color: darkblue;
+  color: whitesmoke;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 3px 3px gray;
+  padding: 5px 15px;
+  min-height: 30px;
+  min-width: 120px;
+}
+ul {
+margin: 20px;
+}
+.custom-btn {
+    color: #fff;
+    width: 130px;
+    height: 40px;
+    padding: 10px 25px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 500;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+}
+.btn-7 {
+    color: #21ebff;
+    line-height: 40px;
+    padding: 0;
+    border: none;
+}
+.btn-7 span {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.btn-7:before, .btn-7:after {
+    position: absolute;
+    content: "";
+    right: 0;
+    bottom: 0;
+    background: #21ebff;
+    box-shadow: 0 0 5px #21ebff;
+    transition: all 0.3s ease;
+}
+.btn-7:before{
+    height: 50%;
+    width: 2px;
+}
+.btn-7:after {
+    width: 20%;
+    height: 2px;
+}
+.btn-7:hover:before {
+    height: 100%;
+}
+.btn-7:hover:after {
+    width: 100%;
+}
+.btn-7 span:before, .btn-7 span:after {
+    position: absolute;
+    content: "";
+    left: 0;
+    top: 0;
+    background: #21ebff;
+    box-shadow: 0 0 5px #21ebff;
+    transition: all 0.3s ease;
+}
+.btn-7 span:before {
+    width: 2px;
+    height: 50%;
+}
+.btn-7 span:after {
+    height: 2px;
+    width: 20%;
+}
+.btn-7 span:hover:before {
+    height: 100%;
+}
+.btn-7 span:hover:after {
+    width: 100%;
+}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="neonText">
+            Welcome to our web server
+      </h1>
+      <h2 class="neonText">enjoy</h2> 
+    </div>
+    <div style="margin: 0 auto; width: 656px; text-align: center;">
+      <ul class="custom-btn btn-7"><span> <a href="../home/testing.html">hhhhh</a></span></button>
+      <ul class="custom-btn btn-7"><span>page 2</span></ul>
+      <ul class="custom-btn btn-7"><span>page 3</span></ul> 
+    </div>
+
+  </body>
+</html>
