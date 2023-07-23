@@ -4,6 +4,7 @@
 class pars {
 	public :
 		int	rflag;
+
 		int	end_flag;
 		size_t		written;
 		size_t		to_write;
@@ -11,6 +12,7 @@ class pars {
 		size_t		to_be_skip;
 		std::string	hexa;
 		size_t		chunk_n;
+
 		ssize_t t_valread;
 		ssize_t valread;
 		ssize_t cont_l;
