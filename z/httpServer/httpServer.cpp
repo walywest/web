@@ -1,11 +1,5 @@
 #include "../Headers/WebServerIncludes.hpp"
 
-int	ft_strlen(const char* str) {
-	int i;
-	for (i = 0; str[i] != 0; ++i);
-	return i;
-}
-
 httpServer::httpServer() {
 	startingConnection("127.0.0.1", _port);
 	startingServer();
@@ -84,13 +78,13 @@ void	httpServer::startingConnection(const char* interface, int port)
 
 void	httpServer::startingServer()
 {
-	char			r_buff[1024] = {0};
 	int	c_s = 0;
 	pars			p;//this is the struct i addded to store parsing infos;
 
 	p.valread = 1;
 	while (1)
 	{
+		char			r_buff[1024] = {0};
 		std::cout << "\n---------------- Waiting for a new connection ----------------\n";
 			fflush(stdout);
 		if ((c_s = accept(serverSocket, (struct sockaddr*)&address, &addrLength)))
@@ -125,7 +119,7 @@ void	httpServer::startingServer()
 void	httpServer::parseRequest(char* buffer, pars &p, ServerConfig data)
 {
 	if (p.headers["method"] == "POST")
-		POST(std::string(buffer, p.valread), p);
+		POST(std::string(buffer, p.valread), p, data);
 	else
 	{
 		std::string line, body;
@@ -185,10 +179,10 @@ void	httpServer::parseRequest(char* buffer, pars &p, ServerConfig data)
 			std::cout << "went to POST" <<std::endl;
 			fflush(stdout);
 			// std::cout << "this is the body size" << body.size() << std::endl;
-			POST(body, p);
+			POST(body, p, data);
 		}
 		else if (p.headers["method"] == "DELETE")
-			DELETE();
+			DELETE(p.headers["url"], p.headers, getMatchingLocation(p.headers["url"], p.headers["method"], data.GetLocation()), data);
 		else
 		{
 			std::cout << "|" << p.headers["method"] << "|" << std::endl;
@@ -358,6 +352,8 @@ std::string	httpServer::getContent(std::string filename) {
 
 // modify the generation of response to handle heavier files by sending them in chunks
 void	httpServer::generateResponse(std::string s, std::string type) {
+	(void)s;
+	(void)type;
 	// size_t					c_num = data.size();
 	// std::stringstream	response[c_num];
 	// for (size_t i = 0; i < c_num; ++i) {

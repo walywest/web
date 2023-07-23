@@ -30,6 +30,7 @@ class	ConfigFile;
 
 #include "ConfigFileParsing/ConfigFile.hpp"
 
+
 // #define c_num 1
 #define _port 8080
 #define localhost "127.0.0.1"
@@ -40,29 +41,7 @@ class	ConfigFile;
 #define M_B 1837816389
 #define UPLOADED_FILE "fototita.mp4"
 #define	FILE_SIZE 183781638
-
-
-class pars {
-	public :
-		int			end_flag;
-		size_t		written;
-		size_t		to_write;
-		size_t		hex_l;
-		size_t		to_be_skip;
-		std::string	hexa; //the hexa value as a string
-		size_t		chunk_n;
-		int		type;
-		ssize_t t_valread;
-		ssize_t valread;
-		ssize_t cont_l;
-		ssize_t max;
-		size_t s;
-		std::map<std::string, std::string> headers;
-		std::ofstream			upload_file;
-		std::string	host;
-		pars();
-		void	upd_valread();
-};
+#include "post.hpp"
 
 
 class httpServer
@@ -70,7 +49,6 @@ class httpServer
 	private:
 		/*-------------------------------Data  memebers----------------------------*/
 		// std::vector<serverSocket>			server_socket; // socket descriptor, an integer (like a file-handle)
-		int	status;
 		struct sockaddr_in	address;
 		socklen_t			addrLength;
 		int					serverSocket; // socket descriptor, an integer (like a file-handle)
@@ -95,7 +73,7 @@ class httpServer
 		void						generateResponse(std::string s, std::string type);
 		/*----------------------------------HTTP methods-------------------------------*/
 		void						GET(std::string& url, std::map<std::string,std::string> headers, const Location* matchedLocation, ServerConfig data); // i will just ignore the host header for the moment
-		void						POST(std::string body, pars& p);
+		void						POST(std::string body, pars& p, ServerConfig data);
 		void						DELETE(std::string& url, std::map<std::string,std::string> headers, const Location* matchedLocation, ServerConfig data);
 		/*----------------------------Common Gateway Interface---------------------------*/
 		// void		CGI(std::string query, std::string url, char** env);
@@ -110,7 +88,5 @@ class httpServer
 		// httpServer&    operator=(httpServer const & obj);
 		/*------------------------------------getters---------------------------------*/
 };
-
-int	ft_strlen(char* str);
 
 #endif
