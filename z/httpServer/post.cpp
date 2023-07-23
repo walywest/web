@@ -264,7 +264,6 @@ void	pars::upd_valread()
 
 void	httpServer::POST(std::string body, pars &p, ServerConfig data)
 {
-    (void)data;
     //add the checks here
     /********/ //check if the body doesn't exist later inside the post
     //later check if the length of the body that was written is equal to the Content-Length
@@ -301,7 +300,6 @@ void	httpServer::POST(std::string body, pars &p, ServerConfig data)
             p.upload_file.close();
          }
     }
-    (void)p;
-	(void)body;
+    (void)data;
 }
 // ****** END OF POST METHOD 

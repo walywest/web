@@ -213,10 +213,12 @@ void	httpServer::is_valid(std::map<std::string,std::string> headers, std::string
 const Location*	httpServer::getMatchingLocation(std::string url, std::string method, const std::vector<Location>& location) {
 	size_t i;
 	// Iterate through the available Location objects
-	for (i = 0; i < location.size(); ++i) {
+	for (i = 0; i < location.size(); ++i)
+	{
     	// Compare the requested URL with the defined path in the Location object
 		std::string path = location[i].GetPath();
-    	if (url.find(path) == 0 && url.substr(path.length(), url.length())[0] == '/') { // check if equal
+    	if (url.find(path) == 0 && url.substr(path.length(), url.length())[0] == '/')// check if equal
+		{
         	// Check if the HTTP method is allowed for the matched Location object
         	std::vector<std::string> allowedMethods = location[i].GetMethods();
         	if (std::find(allowedMethods.begin(), allowedMethods.end(), method) != allowedMethods.end()) {
@@ -291,24 +293,30 @@ std::string	httpServer::getPath(std::string url, const Location* matchedLocation
     // handle the root url and remove trailing slashes
     if (url == "/")
 		path = root;
-	else {
-        while (!url.empty() && url.back() == '/') {
+	else
+	{
+        while (!url.empty() && url.back() == '/')
             url.pop_back();
-        }
-		if (!matchedLocation->GetRedirect().empty()) {
+
+		if (!matchedLocation->GetRedirect().empty())
+		{
 			status = 301; // or 302
 			path =  root + matchedLocation->GetRedirect();
 			// set the Location header to the new URL
-		} else
+		}
+
+		else
 			path = root + url;
     }
     // handle the case when the path points to a directory
 	std::cout << " |" << path << "| " << std::endl;
 	std::vector<std::string> dirContent = getDirContent(path); // check if its empty
-	if (dirContent.size() != 0) {
+	if (dirContent.size() != 0)
+	{
 		path += "/";
 		// std::cout << path << std::endl;
-		if (!matchedLocation->GetIndex().empty()) {
+		if (!matchedLocation->GetIndex().empty())
+		{
 			if (std::find(dirContent.begin(), dirContent.end(), matchedLocation->GetIndex()) != dirContent.end()) {
 				status = 200;
 				return path + matchedLocation->GetIndex();
@@ -349,7 +357,6 @@ std::string	httpServer::getContent(std::string filename) {
 		status = 404;
 		return getContent("../errors/404.html");
 	}
-		
 }
 
 // modify the generation of response to handle heavier files by sending them in chunks
