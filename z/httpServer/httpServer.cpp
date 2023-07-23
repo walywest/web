@@ -88,8 +88,9 @@ void	httpServer::startingServer()
 		char			r_buff[1024] = {0};
 		std::cout << "\n---------------- Waiting for a new connection ----------------\n";
 			fflush(stdout);
-		if ((c_s = accept(serverSocket, (struct sockaddr*)&address, &addrLength)))
+		if ((c_s = accept(serverSocket, (struct sockaddr*)&address, &addrLength)) < 0)
 			throw std::runtime_error("tooooz");
+		std::cout << "hehehe" << std::endl;
 		std::cout << "\n------------------- New connection accepted -------------------\n";
 			fflush(stdout);
 		size_t o = 0;
