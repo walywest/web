@@ -10,7 +10,7 @@ int main() {
        	std::vector<ServerConfig> servers;
 		ConfigFile conf(servers);
 
-		conf.Check_Conf_file("confif files/test.conf");
+		conf.Check_Conf_file("config files/test.conf");
 
 
         httpServer test(conf.GetServers());

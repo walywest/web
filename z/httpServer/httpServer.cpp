@@ -60,13 +60,13 @@ void	httpServer::startingConnection(const char* interface, int port)
 	memset((char *)&address, 0, sizeof(address));
 	address.sin_family = AF_INET; // AF_INET
 	address.sin_port = htons(port); // htons coverts a short integer to a network representation
-	address.sin_addr.s_addr = inet_addr(interface); //FIX1
+	address.sin_addr.s_addr = htonl(INADDR_ANY);
 	memset(address.sin_zero, '\0', sizeof(address.sin_zero));
 	addrLength = sizeof(address);
 	serverSocket = socket(AF_INET, SOCK_STREAM, 0);
 	if (serverSocket < 0)
 		throw std::runtime_error("tooooz");
-	setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &opts, sizeof(int)); //FIX2 might fix socket still using port after the end of the programme;
+	setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &opts, sizeof(int));
 	std::cout << "Bindig ..." << std::endl;
 	if (bind(serverSocket, (struct sockaddr*)&address, addrLength) < 0)
 		throw std::runtime_error("tooooz");
@@ -74,6 +74,7 @@ void	httpServer::startingConnection(const char* interface, int port)
 	if (listen(serverSocket, backlog) < 0)
 		throw std::runtime_error("tooooz");
 	std::cout << "Success ! ..." << std::endl;
+	(void)interface;
 }
 
 void	httpServer::startingServer()
