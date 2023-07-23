@@ -121,7 +121,7 @@ void	httpServer::startingServer()
 void	httpServer::parseRequest(char* buffer, pars &p, ServerConfig data)
 {
 	if (p.headers["method"] == "POST")
-		POST(std::string(buffer, p.valread), p, data);
+		POST(std::string(buffer,p.valread), p, getMatchingLocation(p.headers["url"], p.headers["method"], data.GetLocation()), data);
 	else
 	{
 		std::string line, body;
@@ -181,7 +181,7 @@ void	httpServer::parseRequest(char* buffer, pars &p, ServerConfig data)
 			std::cout << "went to POST" <<std::endl;
 			fflush(stdout);
 			// std::cout << "this is the body size" << body.size() << std::endl;
-			POST(body, p, data);
+			POST(body, p, getMatchingLocation(p.headers["url"], p.headers["method"], data.GetLocation()), data);
 		}
 		else if (p.headers["method"] == "DELETE")
 			DELETE(p.headers["url"], p.headers, getMatchingLocation(p.headers["url"], p.headers["method"], data.GetLocation()), data);
@@ -217,7 +217,7 @@ const Location*	httpServer::getMatchingLocation(std::string url, std::string met
 	{
     	// Compare the requested URL with the defined path in the Location object
 		std::string path = location[i].GetPath();
-    	if (url.find(path) == 0 && url.substr(path.length(), url.length())[0] == '/')// check if equal
+    	if (url.find(path) == 0)// check if equal
 		{
         	// Check if the HTTP method is allowed for the matched Location object
         	std::vector<std::string> allowedMethods = location[i].GetMethods();

@@ -73,7 +73,7 @@ class httpServer
 		void						generateResponse(std::string s, std::string type);
 		/*----------------------------------HTTP methods-------------------------------*/
 		void						GET(std::string& url, std::map<std::string,std::string> headers, const Location* matchedLocation, ServerConfig data); // i will just ignore the host header for the moment
-		void						POST(std::string body, pars& p, ServerConfig data);
+		void						POST(std::string body, pars &p, const Location* matchedLocation, ServerConfig data);
 		void						DELETE(std::string& url, std::map<std::string,std::string> headers, const Location* matchedLocation, ServerConfig data);
 		/*----------------------------Common Gateway Interface---------------------------*/
 		// void		CGI(std::string query, std::string url, char** env);

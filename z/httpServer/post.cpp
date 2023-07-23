@@ -1,4 +1,4 @@
-#include "WebServerIncludes.hpp"
+#include "../Headers/WebServerIncludes.hpp"
 
 // ********************** POST METHOD 
 int string_split(std::string& m, std::string& s1, std::string& s2, std::string& lim)
@@ -262,8 +262,10 @@ void	pars::upd_valread()
     }
 }
 
-void	httpServer::POST(std::string body, pars &p, ServerConfig data)
+void    POST(std::string body, pars &p, const Location* matchedLocation, ServerConfig data)
 {
+    (void)matchedLocation;
+    (void)data;
     //add the checks here
     /********/ //check if the body doesn't exist later inside the post
     //later check if the length of the body that was written is equal to the Content-Length
