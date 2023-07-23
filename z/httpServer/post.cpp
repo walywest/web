@@ -1,18 +1,6 @@
 #include "../Headers/WebServerIncludes.hpp"
 
 // ********************** POST METHOD 
-int string_split(std::string& m, std::string& s1, std::string& s2, std::string& lim)
-{
-    size_t h_l = 0;
-
-    if ((h_l = m.find(lim)) != std::string::npos)
-    {
-        s1 += m.substr(0, h_l);
-        s2 += m.substr(h_l + lim.size());
-        return (1);
-    }
-    return (0);
-}
 
 int r_err(ssize_t d, pars &p)
 {
@@ -262,7 +250,7 @@ void	pars::upd_valread()
     }
 }
 
-void    POST(std::string body, pars &p, const Location* matchedLocation, ServerConfig data)
+void    httpServer::POST(std::string body, pars &p, const Location* matchedLocation, ServerConfig data)
 {
     (void)matchedLocation;
     (void)data;
