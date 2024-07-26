@@ -1,1 +1,1 @@
-HTTP Web server made with c++.
+HTTP Web server , full implementation with C++.
